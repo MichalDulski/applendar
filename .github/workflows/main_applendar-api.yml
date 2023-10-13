@@ -55,3 +55,12 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3E224FCE676A4122BF68066447B7F756 }}
           package: .
+
+            - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.YOUR_AZURE_SERVICE_PRINCIPAL_SECRET }}
+
+      - name: Set ASPNETCORE_ENVIRONMENT to Development
+        run: |
+          az webapp config appsettings set --resource-group YOUR_RESOURCE_GROUP_NAME --name applendar-api --settings ASPNETCORE_ENVIRONMENT=Development
