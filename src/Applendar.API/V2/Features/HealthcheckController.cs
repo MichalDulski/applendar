@@ -1,10 +1,10 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Applendar.API.V1.Controllers;
+namespace Applendar.API.V2.Features;
 
 [ApiController]
-[ApiVersion(1.0)]
+[ApiVersion(2.0)]
 [Route("api/healthcheck")]
 public class HealthcheckController : ControllerBase
 {
@@ -15,6 +15,6 @@ public class HealthcheckController : ControllerBase
     [HttpGet]
     public ActionResult<string> Get()
     {
-        return Ok("healthy");
+        return Ok("stara cichego");
     }
 }
