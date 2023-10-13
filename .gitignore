@@ -1,3 +1,9 @@
-src/Applendar.API/bin/**
-src/Applendar.API/obj/**
+Applendar.API/bin/**
+Applendar.API/obj/**
+Applendar.Domain/bin/**
+Applendar.Domain/obj/**
+Applendar.Infrastructure/bin/**
+Applendar.Infrastructure/obj/**
+obj/**
+Applendar.sln.DotSettings.user
 .idea/**

@@ -1,4 +1,7 @@
+using Applander.Infrastructure;
+using Applendar.API.V1.Features.Events;
 using Asp.Versioning;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -29,8 +32,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerGen( options => options.OperationFilter<SwaggerDefaultValues>() );
 
+var connection = builder.Configuration.GetConnectionString("SQL_CONNECTION_STRING");
 
+builder.Services.AddInfrastructure(connection);
 
+builder.Services.AddTransient<IAddEventRepository, AddEventRepository>();
+builder.Services.AddTransient<IGetEventsRepository, GetEventsRepository>();
 
 var app = builder.Build();
 
