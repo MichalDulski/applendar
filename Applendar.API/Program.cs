@@ -41,6 +41,7 @@ builder.Services.AddTransient<IAddEventRepository, AddEventRepository>();
 builder.Services.AddTransient<IGetEventsRepository, GetEventsRepository>();
 builder.Services.AddTransient<IRegisterApplendarUserRepository, RegisterApplendarUserRepository>();
 builder.Services.AddTransient<IGetEventDetailsRepository, GetEventDetailsRepository>();
+builder.Services.AddTransient<IGetEventsCalendarDataRepository, GetEventsCalendarDataRepository>();
 
 var app = builder.Build();
 

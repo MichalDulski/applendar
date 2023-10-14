@@ -22,12 +22,13 @@ public class GetEventsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetEventsResult>> Get()
+    public async Task<ActionResult<GetEventDto[]>> Get([FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate,
+        [FromQuery] bool withArchived = false)
     {
         _logger.LogInformation("Get events");
-        var events = await _getEventsRepository.GetEvents();
+        var events = await _getEventsRepository.GetEventsInRangeAsync(fromDate, toDate, withArchived);
         
-        var eventsDto = events.Select(x =>
+        var eventsDtos = events.Select(x =>
         {
             var image = x.Image != null ? Convert.ToBase64String(x.Image) : null;
 
@@ -35,11 +36,9 @@ public class GetEventsController : ControllerBase
                 x.Location, x.EventType, x.OrganizerId, x.MaximumNumberOfParticipants,
                 x.IsCompanionAllowed, x.IsPetAllowed, image);
         }).ToList();
-        return Ok(new GetEventsResult(eventsDto));
+        return Ok(eventsDtos);
     }
 }
-
-public record GetEventsResult(ICollection<GetEventDto> Events);
 
 public record GetEventDto(Guid Id, string Name,
     DateTime StartAtUtc,
@@ -53,7 +52,8 @@ public record GetEventDto(Guid Id, string Name,
 
 public interface IGetEventsRepository
 {
-    Task<ICollection<Event>> GetEvents();
+    Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate, DateTime? toDate,
+        bool withArchived = false, CancellationToken cancellationToken = default);
 }
 
 public class GetEventsRepository : IGetEventsRepository
@@ -65,8 +65,26 @@ public class GetEventsRepository : IGetEventsRepository
         _dbContext = dbContext;
     }
 
-    public async Task<ICollection<Event>> GetEvents()
+    public async Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate, DateTime? toDate,
+        bool withArchived = false, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Event.ToListAsync();
+        var query = _dbContext.Event.AsQueryable();
+        
+        if (!withArchived)
+        {
+            query = query.Where(x => !x.ArchivedAtUtc.HasValue);
+        }
+        
+        if (fromDate != null)
+        {
+            query = query.Where(x => x.StartAtUtc.Date >= fromDate.Value.Date);
+        }
+
+        if (toDate != null)
+        {
+            query = query.Where(x => x.StartAtUtc.Date <= toDate.Value.Date);
+        }
+        
+        return await query.ToListAsync(cancellationToken);
     }
 }

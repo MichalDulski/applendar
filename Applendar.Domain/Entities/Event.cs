@@ -43,6 +43,25 @@ public class Event : BaseEntity
             Image = image,
             Organizer = organizer
         };
+    
+    public void Update(string name, DateTime startAtUtc, Location location, EventType eventType,
+        int? maximumNumberOfParticipants = null, bool isCompanionAllowed = false, bool isPetAllowed = false,
+        byte[]? image = null)
+    {
+        Name = name;
+        StartAtUtc = startAtUtc;
+        Location = location;
+        EventType = eventType;
+        MaximumNumberOfParticipants = maximumNumberOfParticipants;
+        IsCompanionAllowed = isCompanionAllowed;
+        IsPetAllowed = isPetAllowed;
+        Image = image;
+    }
+
+    public void Archive()
+    {
+        ArchivedAtUtc = DateTime.UtcNow;
+    }
 }
 
 public record Location

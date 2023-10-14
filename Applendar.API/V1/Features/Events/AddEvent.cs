@@ -10,12 +10,12 @@ namespace Applendar.API.V1.Features.Events;
 [ApiController]
 [ApiVersion(1.0)]
 [Route("api/events")]
-public class AddEventsController : ControllerBase
+public class AddEventController : ControllerBase
 {
     private readonly IAddEventRepository _addEventRepository;
-    private readonly ILogger<AddEventsController> _logger;
+    private readonly ILogger<AddEventController> _logger;
 
-    public AddEventsController(ILogger<AddEventsController> logger, IAddEventRepository addEventRepository)
+    public AddEventController(ILogger<AddEventController> logger, IAddEventRepository addEventRepository)
     {
         _logger = logger;
         _addEventRepository = addEventRepository;
