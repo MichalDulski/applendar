@@ -4,6 +4,7 @@ using Applander.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Applander.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplanderDbContext))]
-    partial class ApplanderDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231014083551_ExtendEventEntity")]
+    partial class ExtendEventEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

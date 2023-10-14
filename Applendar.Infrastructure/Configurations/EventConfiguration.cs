@@ -10,5 +10,19 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Name).HasMaxLength(255);
+        builder.Property(x => x.MaximumNumberOfParticipants).IsRequired(false);
+        builder.Property(x => x.IsCompanionAllowed).IsRequired();
+        builder.Property(x => x.IsPetAllowed).IsRequired();
+        builder.Property(x => x.StartAtUtc).IsRequired();
+        builder.Property(x => x.IsCompanionAllowed).IsRequired();
+        builder.Property(x => x.IsPetAllowed).IsRequired();
+        builder.Property(x => x.Image).IsRequired(false);
+        builder.Property(x => x.EventType).IsRequired();
+        
+        builder.Property(x => x.CreatedAtUtc).IsRequired();
+        builder.Property(x => x.UpdatedAtUtc).IsRequired();
+        builder.Property(x => x.ArchivedAtUtc).IsRequired(false);
+
+        builder.OwnsOne(e => e.Location);
     }
 }
