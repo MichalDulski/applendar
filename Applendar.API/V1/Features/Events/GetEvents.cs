@@ -1,3 +1,4 @@
+using Applander.Domain.Common;
 using Applander.Domain.Entities;
 using Applander.Infrastructure;
 using Asp.Versioning;
@@ -21,19 +22,33 @@ public class GetEventsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<string>> Get()
+    public async Task<ActionResult<GetEventsRepository>> Get()
     {
         _logger.LogInformation("Get events");
         var events = await _getEventsRepository.GetEvents();
         
-        var eventsDto = events.Select(x => new GetEventDto(x.Id, x.Name)).ToList();
+        var eventsDto = events.Select(x =>
+        {
+            var image = x.Image != null ? Convert.ToBase64String(x.Image) : null;
+
+            return new GetEventDto(x.Id, x.Name, x.StartAtUtc,
+                x.Location, x.EventType, x.MaximumNumberOfParticipants,
+                x.IsCompanionAllowed, x.IsPetAllowed, image);
+        }).ToList();
         return Ok(new GetEventsResult(eventsDto));
     }
 }
 
 public record GetEventsResult(ICollection<GetEventDto> Events);
 
-public record GetEventDto(Guid Id, string Name);
+public record GetEventDto(Guid Id, string Name,
+    DateTime StartAtUtc,
+    Location Location,
+    EventType EventType,
+    int? MaximumNumberOfParticipants = null,
+    bool IsCompanionAllowed = false,
+    bool IsPetAllowed = false,
+    string? Base64Image = null);
 
 public interface IGetEventsRepository
 {
