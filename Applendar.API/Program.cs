@@ -51,6 +51,7 @@ builder.Services.AddTransient<IUpdateEventRepository, UpdateEventRepository>();
 builder.Services.AddTransient<IUpdateApplendarUserPreferencesRepository, UpdateApplendarUserPreferencesRepository>();
 builder.Services.AddTransient<IGetApplendarUserDetailsRepository, GetApplendarUserDetailsRepository>();
 builder.Services.AddTransient<IGetUserEventInvitationsRepository, GetUserEventInvitationsRepository>();
+builder.Services.AddTransient<IUpdateUserInvitationRepository, UpdateUserInvitationRepository>();
 
 var app = builder.Build();
 

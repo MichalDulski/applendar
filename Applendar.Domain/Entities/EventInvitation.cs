@@ -17,4 +17,9 @@ public class EventInvitation : Updateable
             EventId = @event.Id,
             Status = InvitationStatus.Pending
         };
+
+    public void ChangeInvitationStatus(InvitationStatus status)
+    {
+        Status = status;
+    }
 }
