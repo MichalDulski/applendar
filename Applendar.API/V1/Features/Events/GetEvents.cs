@@ -68,7 +68,7 @@ public class GetEventsRepository : IGetEventsRepository
     public async Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate, DateTime? toDate,
         bool withArchived = false, CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Event.AsQueryable();
+        var query = _dbContext.Events.AsQueryable();
         
         if (!withArchived)
         {

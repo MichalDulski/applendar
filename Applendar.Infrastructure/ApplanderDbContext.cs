@@ -7,8 +7,9 @@ namespace Applander.Infrastructure;
 
 public class ApplanderDbContext : DbContext
 {
-    public DbSet<Event> Event { get; set; }
+    public DbSet<Event> Events { get; set; }
     public DbSet<ApplendarUser> ApplendarUsers { get; set; }
+    public DbSet<EventInvitation> EventInvitations { get; set; }
 
     public ApplanderDbContext(DbContextOptions<ApplanderDbContext> options) : base(options)
     {

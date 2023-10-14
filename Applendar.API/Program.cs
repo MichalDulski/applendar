@@ -46,6 +46,8 @@ builder.Services.AddTransient<IDeleteEventRepository, DeleteEventRepository>();
 builder.Services.AddTransient<IUpdateEventRepository, UpdateEventRepository>();
 builder.Services.AddTransient<IUpdateApplendarUserPreferencesRepository, UpdateApplendarUserPreferencesRepository>();
 builder.Services.AddTransient<IGetApplendarUserDetailsRepository, GetApplendarUserDetailsRepository>();
+builder.Services.AddTransient<IGetUserEventInvitationsRepository, GetUserEventInvitationsRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

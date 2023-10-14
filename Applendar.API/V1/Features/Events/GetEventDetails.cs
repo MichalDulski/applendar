@@ -64,6 +64,6 @@ public class GetEventDetailsRepository : IGetEventDetailsRepository
 
     public async Task<Event?> GetEventDetailsAsync(Guid eventId, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Event.FirstOrDefaultAsync(x => x.Id == eventId, cancellationToken);
+        return await _dbContext.Events.FirstOrDefaultAsync(x => x.Id == eventId, cancellationToken);
     }
 }

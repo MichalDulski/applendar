@@ -9,4 +9,12 @@ public class EventInvitation : Updateable
     public ApplendarUser ApplendarUser { get; set; }
     public Event Event { get; set; }
     public InvitationStatus Status { get; set; }
+    
+    public static EventInvitation Create(ApplendarUser applendarUser, Event @event)
+        => new()
+        {
+            ApplendarUserId = applendarUser.Id,
+            EventId = @event.Id,
+            Status = InvitationStatus.Pending
+        };
 }

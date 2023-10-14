@@ -44,6 +44,12 @@ public class Event : BaseEntity
             Image = image,
             Organizer = organizer
         };
+
+    public void InviteUser(ApplendarUser user)
+    {
+        var invitation = EventInvitation.Create(user, this);
+        Invitations.Add(invitation);
+    }
     
     public void Update(string name, DateTime startAtUtc, Location location, EventType eventType,
         int? maximumNumberOfParticipants = null, bool isCompanionAllowed = false, bool isPetAllowed = false,

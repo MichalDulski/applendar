@@ -76,7 +76,7 @@ public class UpdateEventRepository : IUpdateEventRepository
         => _dbContext = dbContext;
 
     public async Task<Event?> GetEventAsync(Guid eventId, CancellationToken cancellationToken = default)
-        => await _dbContext.Event.FirstOrDefaultAsync(x => x.Id == eventId, cancellationToken);
+        => await _dbContext.Events.FirstOrDefaultAsync(x => x.Id == eventId, cancellationToken);
 
     public async Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default)
         => await _dbContext.ApplendarUsers.FirstOrDefaultAsync(x => x.Id == organizerId, cancellationToken);

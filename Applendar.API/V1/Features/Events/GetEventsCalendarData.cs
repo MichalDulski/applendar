@@ -75,7 +75,7 @@ public class GetEventsCalendarDataRepository : IGetEventsCalendarDataRepository
         bool withArchived = false,
         CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Event.AsQueryable();
+        var query = _dbContext.Events.AsQueryable();
 
         if (!withArchived)
         {

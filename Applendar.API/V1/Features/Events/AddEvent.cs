@@ -40,6 +40,14 @@ public class AddEventController : ControllerBase
             request.IsPetAllowed, image);
 
         _addEventRepository.AddEvent(@event);
+
+        var appUsers = await _addEventRepository.GetAllUsersAsync();
+
+        foreach (var appUser in appUsers)
+        {
+            @event.InviteUser(appUser);
+        }
+        
         await _addEventRepository.SaveChangesAsync();
 
         var response = new AddEventResponse(@event.Id, @event.Name);
@@ -65,6 +73,7 @@ public interface IAddEventRepository
     void AddEvent(Event @event);
 
     Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default);
+    Task<ICollection<ApplendarUser>> GetAllUsersAsync(CancellationToken cancellationToken = default);
     Task SaveChangesAsync();
 }
 
@@ -75,10 +84,13 @@ public class AddEventRepository : IAddEventRepository
     public AddEventRepository(ApplanderDbContext dbContext)
         => _dbContext = dbContext;
 
-    public void AddEvent(Event @event) { _dbContext.Event.Add(@event); }
+    public void AddEvent(Event @event) { _dbContext.Events.Add(@event); }
 
     public async Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default)
         => await _dbContext.ApplendarUsers.FirstOrDefaultAsync(x => x.Id == organizerId, cancellationToken);
+
+    public async Task<ICollection<ApplendarUser>> GetAllUsersAsync(CancellationToken cancellationToken = default)
+        => await _dbContext.ApplendarUsers.ToListAsync(cancellationToken);
 
     public async Task SaveChangesAsync() { await _dbContext.SaveChangesAsync(); }
 }
