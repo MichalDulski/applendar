@@ -22,7 +22,7 @@ public class GetEventsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetEventsRepository>> Get()
+    public async Task<ActionResult<GetEventsResult>> Get()
     {
         _logger.LogInformation("Get events");
         var events = await _getEventsRepository.GetEvents();
