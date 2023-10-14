@@ -40,6 +40,7 @@ builder.Services.AddInfrastructure(connection);
 builder.Services.AddTransient<IAddEventRepository, AddEventRepository>();
 builder.Services.AddTransient<IGetEventsRepository, GetEventsRepository>();
 builder.Services.AddTransient<IRegisterApplendarUserRepository, RegisterApplendarUserRepository>();
+builder.Services.AddTransient<IGetEventDetailsRepository, GetEventDetailsRepository>();
 
 var app = builder.Build();
 
