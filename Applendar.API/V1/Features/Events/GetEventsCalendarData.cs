@@ -27,7 +27,7 @@ public class GetEventsCalendarDataController : ControllerBase
         [FromQuery] DateTime? toDate = null,
         [FromQuery] bool withArchived = false)
     {
-        _logger.LogInformation("Get events");
+        _logger.LogInformation("Get events calendar data");
         var events = await _getEventsRepository.GetEventsInRangeAsync(fromDate, toDate, withArchived);
 
         var eventsDto = events.Select(x =>

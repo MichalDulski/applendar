@@ -22,10 +22,10 @@ public class UpdateEventController : ControllerBase
     }
 
     [HttpPut("{eventId}")]
-    public async Task<ActionResult<AddEventResponse>> Put([FromRoute] Guid eventId,
+    public async Task<ActionResult<UpdateEventResponse>> Put([FromRoute] Guid eventId,
         [FromBody] UpdateEventRequest request)
     {
-        _logger.LogInformation("Adding event");
+        _logger.LogInformation("Update an event");
         
         var @event = await _updateEventRepository.GetEventAsync(eventId);
 

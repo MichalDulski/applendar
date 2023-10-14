@@ -25,7 +25,7 @@ public class GetEventDetailsController : ControllerBase
     [HttpGet("{eventId}")]
     public async Task<ActionResult<GetEventDetailsResult>> Get([FromRoute] Guid eventId)
     {
-        _logger.LogInformation("Get events");
+        _logger.LogInformation("Get event details");
         var eventDetails = await _getEventDetailsRepository.GetEventDetailsAsync(eventId);
 
         if (eventDetails is null)
