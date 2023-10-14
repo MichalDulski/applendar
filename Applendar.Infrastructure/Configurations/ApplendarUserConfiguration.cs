@@ -16,6 +16,7 @@ public class ApplendarUserConfiguration : IEntityTypeConfiguration<ApplendarUser
         builder.Property(x => x.CreatedAtUtc).IsRequired();
         builder.Property(x => x.UpdatedAtUtc).IsRequired();
         builder.Property(x => x.ArchivedAtUtc).IsRequired(false);
-        
+
+        builder.OwnsOne(x => x.Preferences);
     }
 }

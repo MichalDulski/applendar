@@ -10,6 +10,8 @@ public class ApplendarUser : BaseEntity
     // Auth0 user id/subject
     public string ExternalId { get; set; }
     
+    public Preferences Preferences { get; set; }
+    
     public virtual ICollection<Event> OrganizedEvents { get; set; } = new List<Event>();
     
     public static ApplendarUser Create(string firstName, string lastName, string externalId)
@@ -18,6 +20,14 @@ public class ApplendarUser : BaseEntity
             Id = Guid.NewGuid(),
             FirstName = firstName,
             LastName = lastName,
-            ExternalId = externalId
+            ExternalId = externalId,
+            Preferences = new Preferences(true, true, true, true)
         };
+    
+    public void UpdateUserPreferences(Preferences preferences)
+    {
+        Preferences = preferences;
+    }
 }
+
+public record Preferences(bool NotifyAboutOnlineEvents, bool NotifyAboutOfflineEvents, bool NotifyAboutEventsWithPets, bool NotifyAboutEventsWithCompanions);
