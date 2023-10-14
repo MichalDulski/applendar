@@ -31,8 +31,9 @@ public class GetEventDetailsController : ControllerBase
         if (eventDetails is null)
             return BadRequest("Not found");
 
-        var invitedUsers = eventDetails.Invitations
-            .Select(x => new InvitedUser(x.ApplendarUser.FirstName, x.ApplendarUser.LastName, x.Status))
+        var invitedUsers = eventDetails.Invitations.Select(x
+                => new InvitedUser(x.ApplendarUser.Id, x.ApplendarUser.FirstName, x.ApplendarUser.LastName,
+                    x.Status))
             .ToList();
 
         var eventDetailsDto = new GetEventDetailsResult(eventDetails.Id, eventDetails.Name, eventDetails.StartAtUtc,
@@ -56,7 +57,8 @@ public record GetEventDetailsResult(Guid Id,
     bool IsPetAllowed = false,
     string? Base64Image = null);
 
-public record InvitedUser(string FirstName,
+public record InvitedUser(Guid Id,
+    string FirstName,
     string LastName,
     InvitationStatus Status);
 
