@@ -60,8 +60,8 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
             options.SwaggerDoc(description.GroupName,
                 new OpenApiInfo
                 {
-                    Title = "Example API",
-                    Description = "An example API",
+                    Title = "Applendar API",
+                    Description = "The best event organizing app API documentation",
                     Version = description.ApiVersion.ToString()
                 });
         }
