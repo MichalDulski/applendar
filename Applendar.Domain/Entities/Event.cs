@@ -17,6 +17,7 @@ public class Event : BaseEntity
     public bool IsPetAllowed { get; set; }
     public byte[]? Image { get; set; }
     public EventType EventType { get; set; }
+    public ICollection<EventInvitation> Invitations { get; set; } = new List<EventInvitation>();
 
     public bool IsStarted => StartAtUtc <= DateTime.UtcNow;
     public bool IsArchived => ArchivedAtUtc.HasValue;

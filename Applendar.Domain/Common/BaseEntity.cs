@@ -1,9 +1,6 @@
 namespace Applander.Domain.Common;
 
-public class BaseEntity
+public abstract class BaseEntity : Updateable
 {
     public Guid Id { get; set; }
-    public DateTime CreatedAtUtc { get; set; }
-    public DateTime UpdatedAtUtc { get; set; }
-    public DateTime? ArchivedAtUtc { get; set; }
 }

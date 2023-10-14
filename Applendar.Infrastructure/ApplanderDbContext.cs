@@ -18,6 +18,7 @@ public class ApplanderDbContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new EventConfiguration());
         modelBuilder.ApplyConfiguration(new ApplendarUserConfiguration());
+        modelBuilder.ApplyConfiguration(new EventInvitationConfiguration());
     }
     
     public override int SaveChanges()

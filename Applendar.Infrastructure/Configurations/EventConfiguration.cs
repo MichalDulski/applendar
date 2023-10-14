@@ -29,5 +29,10 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
             .WithMany(x => x.OrganizedEvents)
             .HasForeignKey(x => x.OrganizerId)
             .IsRequired(true);
+
+        builder.HasMany(x => x.Invitations)
+            .WithOne(x => x.Event)
+            .HasForeignKey(x => x.EventId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

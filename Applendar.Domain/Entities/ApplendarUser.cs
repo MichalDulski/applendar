@@ -12,6 +12,7 @@ public class ApplendarUser : BaseEntity
     
     public Preferences Preferences { get; set; }
     
+    public virtual ICollection<EventInvitation> EventInvitations { get; set; } = new List<EventInvitation>();
     public virtual ICollection<Event> OrganizedEvents { get; set; } = new List<Event>();
     
     public static ApplendarUser Create(string firstName, string lastName, string externalId)
