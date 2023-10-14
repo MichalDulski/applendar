@@ -31,10 +31,16 @@ public class GetEventDetailsController : ControllerBase
         if (eventDetails is null)
             return BadRequest("Not found");
 
-        return Ok(new GetEventDetailsResult(eventDetails.Id, eventDetails.Name, eventDetails.StartAtUtc,
+        var invitedUsers = eventDetails.Invitations
+            .Select(x => new InvitedUser(x.ApplendarUser.FirstName, x.ApplendarUser.LastName, x.Status))
+            .ToList();
+
+        var eventDetailsDto = new GetEventDetailsResult(eventDetails.Id, eventDetails.Name, eventDetails.StartAtUtc,
             eventDetails.Location, eventDetails.EventType, eventDetails.OrganizerId,
-            eventDetails.MaximumNumberOfParticipants, eventDetails.IsCompanionAllowed, eventDetails.IsPetAllowed,
-            eventDetails.Image != null ? Convert.ToBase64String(eventDetails.Image) : null));
+            invitedUsers, eventDetails.MaximumNumberOfParticipants, eventDetails.IsCompanionAllowed,
+            eventDetails.IsPetAllowed, eventDetails.Image != null ? Convert.ToBase64String(eventDetails.Image) : null);
+
+        return Ok(eventDetailsDto);
     }
 }
 
@@ -44,10 +50,15 @@ public record GetEventDetailsResult(Guid Id,
     Location Location,
     EventType EventType,
     Guid OrganizerId,
+    ICollection<InvitedUser> InvitedUsers,
     int? MaximumNumberOfParticipants = null,
     bool IsCompanionAllowed = false,
     bool IsPetAllowed = false,
     string? Base64Image = null);
+
+public record InvitedUser(string FirstName,
+    string LastName,
+    InvitationStatus Status);
 
 public interface IGetEventDetailsRepository
 {
@@ -63,6 +74,9 @@ public class GetEventDetailsRepository : IGetEventDetailsRepository
 
     public async Task<Event?> GetEventDetailsAsync(Guid eventId, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Events.FirstOrDefaultAsync(x => x.Id == eventId, cancellationToken);
+        return await _dbContext.Events.AsNoTracking()
+            .Include(x => x.Invitations)
+            .ThenInclude(x => x.ApplendarUser)
+            .FirstOrDefaultAsync(x => x.Id == eventId, cancellationToken);
     }
 }
