@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Applander.Infrastructure;
 using Applendar.API.V1.Features.Events;
 using Applendar.API.V1.Features.Users;
@@ -26,7 +27,10 @@ builder.Services.AddApiVersioning(options =>
         // can also be used to control the format of the API version in route templates
         options.SubstituteApiVersionInUrl = true;
     } );;
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
