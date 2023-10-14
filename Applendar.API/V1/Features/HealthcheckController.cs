@@ -10,11 +10,10 @@ public class HealthcheckController : ControllerBase
 {
     private readonly ILogger<HealthcheckController> _logger;
 
-    public HealthcheckController(ILogger<HealthcheckController> logger) { _logger = logger; }
+    public HealthcheckController(ILogger<HealthcheckController> logger)
+        => _logger = logger;
 
     [HttpGet]
     public ActionResult<string> Get()
-    {
-        return Ok("healthy");
-    }
+        => Ok("healthy");
 }

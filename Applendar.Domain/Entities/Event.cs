@@ -4,23 +4,22 @@ namespace Applander.Domain.Entities;
 
 public class Event : BaseEntity
 {
-    public Event() { }
-
-    public Guid OrganizerId { get; set; }
-    public virtual ApplendarUser Organizer { get; set; }
-    public string Name { get; set; }
-    public DateTime StartAtUtc { get; set; }
-    public Location Location { get; set; }
-    public int? MaximumNumberOfParticipants { get; set; }
+    public bool IsArchived => ArchivedAtUtc.HasValue;
     public bool IsNumberOfParticipantsLimited => MaximumNumberOfParticipants.HasValue;
-    public bool IsCompanionAllowed { get; set; }
-    public bool IsPetAllowed { get; set; }
-    public byte[]? Image { get; set; }
-    public EventType EventType { get; set; }
-    public ICollection<EventInvitation> Invitations { get; set; } = new List<EventInvitation>();
 
     public bool IsStarted => StartAtUtc <= DateTime.UtcNow;
-    public bool IsArchived => ArchivedAtUtc.HasValue;
+    public EventType EventType { get; set; }
+    public byte[]? Image { get; set; }
+    public ICollection<EventInvitation> Invitations { get; set; } = new List<EventInvitation>();
+    public bool IsCompanionAllowed { get; set; }
+    public bool IsPetAllowed { get; set; }
+    public Location Location { get; set; }
+    public int? MaximumNumberOfParticipants { get; set; }
+    public string Name { get; set; }
+    public virtual ApplendarUser Organizer { get; set; }
+
+    public Guid OrganizerId { get; set; }
+    public DateTime StartAtUtc { get; set; }
 
     public static Event Create(string name,
         DateTime startAtUtc,
@@ -45,14 +44,21 @@ public class Event : BaseEntity
             Organizer = organizer
         };
 
+    public void Archive() { ArchivedAtUtc = DateTime.UtcNow; }
+
     public void InviteUser(ApplendarUser user)
     {
         var invitation = EventInvitation.Create(user, this);
         Invitations.Add(invitation);
     }
-    
-    public void Update(string name, DateTime startAtUtc, Location location, EventType eventType,
-        int? maximumNumberOfParticipants = null, bool isCompanionAllowed = false, bool isPetAllowed = false,
+
+    public void Update(string name,
+        DateTime startAtUtc,
+        Location location,
+        EventType eventType,
+        int? maximumNumberOfParticipants = null,
+        bool isCompanionAllowed = false,
+        bool isPetAllowed = false,
         byte[]? image = null)
     {
         Name = name;
@@ -63,11 +69,6 @@ public class Event : BaseEntity
         IsCompanionAllowed = isCompanionAllowed;
         IsPetAllowed = isPetAllowed;
         Image = image;
-    }
-
-    public void Archive()
-    {
-        ArchivedAtUtc = DateTime.UtcNow;
     }
 }
 

@@ -26,28 +26,26 @@ public class AddEventController : ControllerBase
     {
         _logger.LogInformation("Adding event");
 
-        var eventOrganizer = await _addEventRepository.GetEventOrganizer(request.OrganizerId);
+        ApplendarUser? eventOrganizer = await _addEventRepository.GetEventOrganizer(request.OrganizerId);
 
         if (eventOrganizer is null)
-        {
             return BadRequest("User not found");
-        }
-        
+
         byte[]? image = request.Base64Image != null ? Convert.FromBase64String(request.Base64Image) : null;
 
         var @event = Event.Create(request.Name, request.StartAtUtc, request.Location,
-            request.EventType, eventOrganizer, request.MaximumNumberOfParticipants, request.IsCompanionAllowed,
-            request.IsPetAllowed, image);
+            request.EventType, eventOrganizer, request.MaximumNumberOfParticipants,
+            request.IsCompanionAllowed, request.IsPetAllowed, image);
 
         _addEventRepository.AddEvent(@event);
 
-        var appUsers = await _addEventRepository.GetAllUsersAsync();
+        ICollection<ApplendarUser> appUsers = await _addEventRepository.GetAllUsersAsync();
 
-        foreach (var appUser in appUsers)
+        foreach (ApplendarUser appUser in appUsers)
         {
             @event.InviteUser(appUser);
         }
-        
+
         await _addEventRepository.SaveChangesAsync();
 
         var response = new AddEventResponse(@event.Id, @event.Name);
@@ -72,8 +70,10 @@ public interface IAddEventRepository
 {
     void AddEvent(Event @event);
 
-    Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default);
     Task<ICollection<ApplendarUser>> GetAllUsersAsync(CancellationToken cancellationToken = default);
+
+    Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default);
+
     Task SaveChangesAsync();
 }
 
@@ -86,11 +86,11 @@ public class AddEventRepository : IAddEventRepository
 
     public void AddEvent(Event @event) { _dbContext.Events.Add(@event); }
 
-    public async Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default)
-        => await _dbContext.ApplendarUsers.FirstOrDefaultAsync(x => x.Id == organizerId, cancellationToken);
-
     public async Task<ICollection<ApplendarUser>> GetAllUsersAsync(CancellationToken cancellationToken = default)
         => await _dbContext.ApplendarUsers.ToListAsync(cancellationToken);
+
+    public async Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default)
+        => await _dbContext.ApplendarUsers.FirstOrDefaultAsync(x => x.Id == organizerId, cancellationToken);
 
     public async Task SaveChangesAsync() { await _dbContext.SaveChangesAsync(); }
 }

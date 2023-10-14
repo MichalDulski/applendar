@@ -12,8 +12,8 @@ namespace Applendar.API.V1.Features.Events;
 [Route("api/events")]
 public class GetEventDetailsController : ControllerBase
 {
-    private readonly ILogger<GetEventDetailsController> _logger;
     private readonly IGetEventDetailsRepository _getEventDetailsRepository;
+    private readonly ILogger<GetEventDetailsController> _logger;
 
     public GetEventDetailsController(ILogger<GetEventDetailsController> logger,
         IGetEventDetailsRepository getEventDetailsRepository)
@@ -26,13 +26,11 @@ public class GetEventDetailsController : ControllerBase
     public async Task<ActionResult<GetEventDetailsResult>> Get([FromRoute] Guid eventId)
     {
         _logger.LogInformation("Get event details");
-        var eventDetails = await _getEventDetailsRepository.GetEventDetailsAsync(eventId);
+        Event? eventDetails = await _getEventDetailsRepository.GetEventDetailsAsync(eventId);
 
         if (eventDetails is null)
-        {
             return BadRequest("Not found");
-        }
-        
+
         return Ok(new GetEventDetailsResult(eventDetails.Id, eventDetails.Name, eventDetails.StartAtUtc,
             eventDetails.Location, eventDetails.EventType, eventDetails.OrganizerId,
             eventDetails.MaximumNumberOfParticipants, eventDetails.IsCompanionAllowed, eventDetails.IsPetAllowed,
@@ -60,7 +58,8 @@ public class GetEventDetailsRepository : IGetEventDetailsRepository
 {
     private readonly ApplanderDbContext _dbContext;
 
-    public GetEventDetailsRepository(ApplanderDbContext dbContext) { _dbContext = dbContext; }
+    public GetEventDetailsRepository(ApplanderDbContext dbContext)
+        => _dbContext = dbContext;
 
     public async Task<Event?> GetEventDetailsAsync(Guid eventId, CancellationToken cancellationToken = default)
     {

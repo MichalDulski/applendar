@@ -12,8 +12,8 @@ namespace Applendar.API.V1.Features.Events;
 [Route("api/events")]
 public class GetEventsController : ControllerBase
 {
-    private readonly ILogger<GetEventsController> _logger;
     private readonly IGetEventsRepository _getEventsRepository;
+    private readonly ILogger<GetEventsController> _logger;
 
     public GetEventsController(ILogger<GetEventsController> logger, IGetEventsRepository getEventsRepository)
     {
@@ -22,25 +22,30 @@ public class GetEventsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetEventDto[]>> Get([FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate,
+    public async Task<ActionResult<GetEventDto[]>> Get([FromQuery] DateTime? fromDate,
+        [FromQuery] DateTime? toDate,
         [FromQuery] bool withArchived = false)
     {
         _logger.LogInformation("Get events");
-        var events = await _getEventsRepository.GetEventsInRangeAsync(fromDate, toDate, withArchived);
-        
-        var eventsDtos = events.Select(x =>
-        {
-            var image = x.Image != null ? Convert.ToBase64String(x.Image) : null;
+        ICollection<Event> events = await _getEventsRepository.GetEventsInRangeAsync(fromDate, toDate, withArchived);
 
-            return new GetEventDto(x.Id, x.Name, x.StartAtUtc,
-                x.Location, x.EventType, x.OrganizerId, x.MaximumNumberOfParticipants,
-                x.IsCompanionAllowed, x.IsPetAllowed, image);
-        }).ToList();
+        List<GetEventDto> eventsDtos = events.Select(x =>
+            {
+                string? image = x.Image != null ? Convert.ToBase64String(x.Image) : null;
+
+                return new GetEventDto(x.Id, x.Name, x.StartAtUtc,
+                    x.Location, x.EventType, x.OrganizerId,
+                    x.MaximumNumberOfParticipants, x.IsCompanionAllowed, x.IsPetAllowed,
+                    image);
+            })
+            .ToList();
+
         return Ok(eventsDtos);
     }
 }
 
-public record GetEventDto(Guid Id, string Name,
+public record GetEventDto(Guid Id,
+    string Name,
     DateTime StartAtUtc,
     Location Location,
     EventType EventType,
@@ -52,8 +57,10 @@ public record GetEventDto(Guid Id, string Name,
 
 public interface IGetEventsRepository
 {
-    Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate, DateTime? toDate,
-        bool withArchived = false, CancellationToken cancellationToken = default);
+    Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate,
+        DateTime? toDate,
+        bool withArchived = false,
+        CancellationToken cancellationToken = default);
 }
 
 public class GetEventsRepository : IGetEventsRepository
@@ -61,30 +68,24 @@ public class GetEventsRepository : IGetEventsRepository
     private readonly ApplanderDbContext _dbContext;
 
     public GetEventsRepository(ApplanderDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+        => _dbContext = dbContext;
 
-    public async Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate, DateTime? toDate,
-        bool withArchived = false, CancellationToken cancellationToken = default)
+    public async Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate,
+        DateTime? toDate,
+        bool withArchived = false,
+        CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Events.AsQueryable();
-        
+        IQueryable<Event> query = _dbContext.Events.AsQueryable();
+
         if (!withArchived)
-        {
             query = query.Where(x => !x.ArchivedAtUtc.HasValue);
-        }
-        
+
         if (fromDate != null)
-        {
             query = query.Where(x => x.StartAtUtc.Date >= fromDate.Value.Date);
-        }
 
         if (toDate != null)
-        {
             query = query.Where(x => x.StartAtUtc.Date <= toDate.Value.Date);
-        }
-        
+
         return await query.ToListAsync(cancellationToken);
     }
 }

@@ -3,21 +3,23 @@ using Applander.Infrastructure;
 using Applendar.API.V1.Features.Events;
 using Applendar.API.V1.Features.Users;
 using Asp.Versioning;
-using Microsoft.EntityFrameworkCore;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddProblemDetails();
+
 builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.ReportApiVersions = true;
-    options.AssumeDefaultVersionWhenUnspecified = true;
-}).AddMvc().AddApiExplorer(
-    options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.ReportApiVersions = true;
+        options.AssumeDefaultVersionWhenUnspecified = true;
+    })
+    .AddMvc()
+    .AddApiExplorer(options =>
     {
         // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
         // note: the specified format code will format the version as "'v'major[.minor][-status]"
@@ -26,18 +28,19 @@ builder.Services.AddApiVersioning(options =>
         // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
         // can also be used to control the format of the API version in route templates
         options.SubstituteApiVersionInUrl = true;
-    } );;
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-});
+    });
+
+;
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-builder.Services.AddSwaggerGen( options => options.OperationFilter<SwaggerDefaultValues>() );
+builder.Services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
 
-var connection = builder.Configuration.GetConnectionString("SQL_CONNECTION_STRING");
+string? connection = builder.Configuration.GetConnectionString("SQL_CONNECTION_STRING");
 
 builder.Services.AddInfrastructure(connection);
 
@@ -53,22 +56,20 @@ builder.Services.AddTransient<IGetApplendarUserDetailsRepository, GetApplendarUs
 builder.Services.AddTransient<IGetUserEventInvitationsRepository, GetUserEventInvitationsRepository>();
 builder.Services.AddTransient<IUpdateUserInvitationRepository, UpdateUserInvitationRepository>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(
-        options =>
+
+    app.UseSwaggerUI(options =>
+    {
+        foreach (ApiVersionDescription description in app.DescribeApiVersions())
         {
-            foreach ( var description in app.DescribeApiVersions() )
-            {
-                options.SwaggerEndpoint(
-                    $"/swagger/{description.GroupName}/swagger.json",
-                    description.GroupName );
-            }
-        } );
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName);
+        }
+    });
 }
 
 app.UseHttpsRedirection();

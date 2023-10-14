@@ -8,8 +8,8 @@ public class EventInvitationConfiguration : IEntityTypeConfiguration<EventInvita
 {
     public void Configure(EntityTypeBuilder<EventInvitation> builder)
     {
-        builder.HasKey(x => new {x.ApplendarUserId, x.EventId});
-        
+        builder.HasKey(x => new { x.ApplendarUserId, x.EventId });
+
         builder.Property(x => x.CreatedAtUtc).IsRequired();
         builder.Property(x => x.UpdatedAtUtc).IsRequired();
         builder.Property(x => x.ArchivedAtUtc).IsRequired(false);

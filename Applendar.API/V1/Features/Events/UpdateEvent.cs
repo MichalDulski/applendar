@@ -12,8 +12,8 @@ namespace Applendar.API.V1.Features.Events;
 [Route("api/events")]
 public class UpdateEventController : ControllerBase
 {
-    private readonly IUpdateEventRepository _updateEventRepository;
     private readonly ILogger<AddEventController> _logger;
+    private readonly IUpdateEventRepository _updateEventRepository;
 
     public UpdateEventController(ILogger<AddEventController> logger, IUpdateEventRepository updateEventRepository)
     {
@@ -26,14 +26,12 @@ public class UpdateEventController : ControllerBase
         [FromBody] UpdateEventRequest request)
     {
         _logger.LogInformation("Update an event");
-        
-        var @event = await _updateEventRepository.GetEventAsync(eventId);
+
+        Event? @event = await _updateEventRepository.GetEventAsync(eventId);
 
         if (@event is null)
-        {
             return BadRequest("Not found");
-        }
-        
+
         byte[]? image = request.Base64Image != null ? Convert.FromBase64String(request.Base64Image) : null;
 
         @event.Update(request.Name, request.StartAtUtc, request.Location,
@@ -65,6 +63,7 @@ public interface IUpdateEventRepository
     Task<Event?> GetEventAsync(Guid eventId, CancellationToken cancellationToken = default);
 
     Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default);
+
     Task SaveChangesAsync();
 }
 

@@ -12,24 +12,30 @@ namespace Applendar.API.V1.Features.Users;
 [Route("api/users")]
 public class GetUserEventInvitationsController : ControllerBase
 {
-    private readonly IGetUserEventInvitationsRepository _repository;
     private readonly ILogger<GetUserEventInvitationsController> _logger;
+    private readonly IGetUserEventInvitationsRepository _repository;
 
-    public GetUserEventInvitationsController(IGetUserEventInvitationsRepository repository, ILogger<GetUserEventInvitationsController> logger)
+    public GetUserEventInvitationsController(IGetUserEventInvitationsRepository repository,
+        ILogger<GetUserEventInvitationsController> logger)
     {
         _repository = repository;
         _logger = logger;
     }
-    
+
     [HttpGet("{applendarUserId}/invitations")]
     public async Task<ActionResult<GetUserEventInvitationDto[]>> Get([FromRoute] Guid applendarUserId)
     {
         _logger.LogInformation("Get Applander user details");
-        
-        var applendarUserInvitations = await _repository.GetUserInvitationsAsync(applendarUserId);
 
-        var invitationDtos = applendarUserInvitations.Select(x => new GetUserEventInvitationDto(x.Event.Name, x.Event.StartAtUtc, x.Event.Location, x.Event.EventType, x.Event.OrganizerId, x.Status, x.Event.MaximumNumberOfParticipants, x.Event.IsCompanionAllowed, x.Event.IsPetAllowed)).ToArray();
-    
+        ICollection<EventInvitation> applendarUserInvitations =
+            await _repository.GetUserInvitationsAsync(applendarUserId);
+
+        GetUserEventInvitationDto[] invitationDtos = applendarUserInvitations.Select(x
+                => new GetUserEventInvitationDto(x.Event.Name, x.Event.StartAtUtc, x.Event.Location,
+                    x.Event.EventType, x.Event.OrganizerId, x.Status,
+                    x.Event.MaximumNumberOfParticipants, x.Event.IsCompanionAllowed, x.Event.IsPetAllowed))
+            .ToArray();
+
         return Ok(invitationDtos);
     }
 }
@@ -46,14 +52,16 @@ public record GetUserEventInvitationDto(string Name,
 
 public interface IGetUserEventInvitationsRepository
 {
-    Task<ICollection<EventInvitation>> GetUserInvitationsAsync(Guid applendarUserId, CancellationToken cancellationToken = default);
+    Task<ICollection<EventInvitation>> GetUserInvitationsAsync(Guid applendarUserId,
+        CancellationToken cancellationToken = default);
 }
 
 public class GetUserEventInvitationsRepository : IGetUserEventInvitationsRepository
 {
     private readonly ApplanderDbContext _dbContext;
 
-    public GetUserEventInvitationsRepository(ApplanderDbContext dbContext) { _dbContext = dbContext; }
+    public GetUserEventInvitationsRepository(ApplanderDbContext dbContext)
+        => _dbContext = dbContext;
 
     public async Task<ICollection<EventInvitation>> GetUserInvitationsAsync(Guid applendarUserId,
         CancellationToken cancellationToken = default)

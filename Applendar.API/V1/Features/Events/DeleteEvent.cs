@@ -1,4 +1,3 @@
-using Applander.Domain.Common;
 using Applander.Domain.Entities;
 using Applander.Infrastructure;
 using Asp.Versioning;
@@ -25,26 +24,20 @@ public class DeleteEventController : ControllerBase
     public async Task<ActionResult<DeleteEventResponse>> Delete([FromRoute] Guid eventId, [FromQuery] Guid organizerId)
     {
         _logger.LogInformation("Deleting an event");
-        
-        var @event = await _deleteEventRepository.GetEventAsync(eventId);
+
+        Event? @event = await _deleteEventRepository.GetEventAsync(eventId);
 
         if (@event is null)
-        {
             return BadRequest("Not found");
-        }
 
-        var organizer = await _deleteEventRepository.GetEventOrganizer(organizerId);
-        
-        if(organizer is null)
-        {
+        ApplendarUser? organizer = await _deleteEventRepository.GetEventOrganizer(organizerId);
+
+        if (organizer is null)
             return BadRequest("User not found");
-        }
 
         if (organizer.Id != organizerId)
-        {
             return Forbid();
-        }
-        
+
         @event.Archive();
 
         await _deleteEventRepository.SaveChangesAsync();
@@ -62,6 +55,7 @@ public interface IDeleteEventRepository
     Task<Event?> GetEventAsync(Guid eventId, CancellationToken cancellationToken = default);
 
     Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default);
+
     Task SaveChangesAsync();
 }
 

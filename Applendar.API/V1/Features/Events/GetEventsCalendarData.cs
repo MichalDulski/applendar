@@ -12,8 +12,8 @@ namespace Applendar.API.V1.Features.Events;
 [Route("api/calendar/events")]
 public class GetEventsCalendarDataController : ControllerBase
 {
-    private readonly ILogger<GetEventsController> _logger;
     private readonly IGetEventsCalendarDataRepository _getEventsRepository;
+    private readonly ILogger<GetEventsController> _logger;
 
     public GetEventsCalendarDataController(ILogger<GetEventsController> logger,
         IGetEventsCalendarDataRepository getEventsRepository)
@@ -23,14 +23,15 @@ public class GetEventsCalendarDataController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<Dictionary<DateTime, List<GetEventCalendarDataDto>>>> Get([FromQuery] DateTime? fromDate = null,
+    public async Task<ActionResult<Dictionary<DateTime, List<GetEventCalendarDataDto>>>> Get(
+        [FromQuery] DateTime? fromDate = null,
         [FromQuery] DateTime? toDate = null,
         [FromQuery] bool withArchived = false)
     {
         _logger.LogInformation("Get events calendar data");
-        var events = await _getEventsRepository.GetEventsInRangeAsync(fromDate, toDate, withArchived);
+        ICollection<Event> events = await _getEventsRepository.GetEventsInRangeAsync(fromDate, toDate, withArchived);
 
-        var eventsDto = events.Select(x =>
+        Dictionary<DateTime, List<GetEventCalendarDataDto>> eventsDto = events.Select(x =>
             {
                 return new GetEventCalendarDataDto(x.Id, x.Name, x.StartAtUtc,
                     x.Location, x.EventType, x.OrganizerId,
@@ -68,29 +69,24 @@ public class GetEventsCalendarDataRepository : IGetEventsCalendarDataRepository
 {
     private readonly ApplanderDbContext _dbContext;
 
-    public GetEventsCalendarDataRepository(ApplanderDbContext dbContext) { _dbContext = dbContext; }
+    public GetEventsCalendarDataRepository(ApplanderDbContext dbContext)
+        => _dbContext = dbContext;
 
     public async Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate,
         DateTime? toDate,
         bool withArchived = false,
         CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Events.AsQueryable();
+        IQueryable<Event> query = _dbContext.Events.AsQueryable();
 
         if (!withArchived)
-        {
             query = query.Where(x => !x.ArchivedAtUtc.HasValue);
-        }
 
         if (fromDate != null)
-        {
             query = query.Where(x => x.StartAtUtc.Date >= fromDate.Value.Date);
-        }
 
         if (toDate != null)
-        {
             query = query.Where(x => x.StartAtUtc.Date <= toDate.Value.Date);
-        }
 
         return await query.ToListAsync();
     }

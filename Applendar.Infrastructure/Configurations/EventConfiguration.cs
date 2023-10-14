@@ -18,7 +18,7 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(x => x.IsPetAllowed).IsRequired();
         builder.Property(x => x.Image).IsRequired(false);
         builder.Property(x => x.EventType).IsRequired();
-        
+
         builder.Property(x => x.CreatedAtUtc).IsRequired();
         builder.Property(x => x.UpdatedAtUtc).IsRequired();
         builder.Property(x => x.ArchivedAtUtc).IsRequired(false);
@@ -28,7 +28,7 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.HasOne(x => x.Organizer)
             .WithMany(x => x.OrganizedEvents)
             .HasForeignKey(x => x.OrganizerId)
-            .IsRequired(true);
+            .IsRequired();
 
         builder.HasMany(x => x.Invitations)
             .WithOne(x => x.Event)
