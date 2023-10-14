@@ -28,6 +28,11 @@ public class GetEventDetailsController : ControllerBase
         _logger.LogInformation("Get events");
         var eventDetails = await _getEventDetailsRepository.GetEventDetailsAsync(eventId);
 
+        if (eventDetails is null)
+        {
+            return BadRequest("Not found");
+        }
+        
         return Ok(new GetEventDetailsResult(eventDetails.Id, eventDetails.Name, eventDetails.StartAtUtc,
             eventDetails.Location, eventDetails.EventType, eventDetails.OrganizerId,
             eventDetails.MaximumNumberOfParticipants, eventDetails.IsCompanionAllowed, eventDetails.IsPetAllowed,
