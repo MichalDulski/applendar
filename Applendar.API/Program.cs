@@ -1,5 +1,6 @@
 using Applander.Infrastructure;
 using Applendar.API.V1.Features.Events;
+using Applendar.API.V1.Features.Users;
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -38,6 +39,7 @@ builder.Services.AddInfrastructure(connection);
 
 builder.Services.AddTransient<IAddEventRepository, AddEventRepository>();
 builder.Services.AddTransient<IGetEventsRepository, GetEventsRepository>();
+builder.Services.AddTransient<IRegisterApplendarUserRepository, RegisterApplendarUserRepository>();
 
 var app = builder.Build();
 

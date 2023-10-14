@@ -24,5 +24,10 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(x => x.ArchivedAtUtc).IsRequired(false);
 
         builder.OwnsOne(e => e.Location);
+
+        builder.HasOne(x => x.Organizer)
+            .WithMany(x => x.OrganizedEvents)
+            .HasForeignKey(x => x.OrganizerId)
+            .IsRequired(true);
     }
 }

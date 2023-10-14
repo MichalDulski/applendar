@@ -8,6 +8,7 @@ namespace Applander.Infrastructure;
 public class ApplanderDbContext : DbContext
 {
     public DbSet<Event> Event { get; set; }
+    public DbSet<ApplendarUser> ApplendarUsers { get; set; }
 
     public ApplanderDbContext(DbContextOptions<ApplanderDbContext> options) : base(options)
     {
@@ -16,6 +17,7 @@ public class ApplanderDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new EventConfiguration());
+        modelBuilder.ApplyConfiguration(new ApplendarUserConfiguration());
     }
     
     public override int SaveChanges()

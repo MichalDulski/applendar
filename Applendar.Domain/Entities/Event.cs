@@ -5,7 +5,9 @@ namespace Applander.Domain.Entities;
 public class Event : BaseEntity
 {
     public Event() { }
-    
+
+    public Guid OrganizerId { get; set; }
+    public virtual ApplendarUser Organizer { get; set; }
     public string Name { get; set; }
     public DateTime StartAtUtc { get; set; }
     public Location Location { get; set; }
@@ -20,7 +22,7 @@ public class Event : BaseEntity
     public bool IsArchived => ArchivedAtUtc.HasValue;
     
     public static Event Create(string name, DateTime startAtUtc, Location location,
-        EventType eventType, int? MaximumNumberOfParticipants = null, bool isCompanionAllowed = false,
+        EventType eventType, ApplendarUser organizer, int? maximumNumberOfParticipants = null, bool isCompanionAllowed = false,
         bool isPetAllowed = false, byte[]? image = null)
         => new()
         {
@@ -29,11 +31,11 @@ public class Event : BaseEntity
             StartAtUtc = startAtUtc,
             Location = location,
             EventType = eventType,
-            MaximumNumberOfParticipants = MaximumNumberOfParticipants,
+            MaximumNumberOfParticipants = maximumNumberOfParticipants,
             IsCompanionAllowed = isCompanionAllowed,
             IsPetAllowed = isPetAllowed,
-            Image = image
-            
+            Image = image,
+            Organizer = organizer
         };
 }
 

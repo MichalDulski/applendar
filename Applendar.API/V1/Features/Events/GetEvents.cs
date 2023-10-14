@@ -32,7 +32,7 @@ public class GetEventsController : ControllerBase
             var image = x.Image != null ? Convert.ToBase64String(x.Image) : null;
 
             return new GetEventDto(x.Id, x.Name, x.StartAtUtc,
-                x.Location, x.EventType, x.MaximumNumberOfParticipants,
+                x.Location, x.EventType, x.OrganizerId, x.MaximumNumberOfParticipants,
                 x.IsCompanionAllowed, x.IsPetAllowed, image);
         }).ToList();
         return Ok(new GetEventsResult(eventsDto));
@@ -45,6 +45,7 @@ public record GetEventDto(Guid Id, string Name,
     DateTime StartAtUtc,
     Location Location,
     EventType EventType,
+    Guid OrganizerId,
     int? MaximumNumberOfParticipants = null,
     bool IsCompanionAllowed = false,
     bool IsPetAllowed = false,

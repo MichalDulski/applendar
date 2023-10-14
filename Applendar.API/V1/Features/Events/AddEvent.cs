@@ -3,6 +3,7 @@ using Applander.Domain.Entities;
 using Applander.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Applendar.API.V1.Features.Events;
 
@@ -25,10 +26,17 @@ public class AddEventsController : ControllerBase
     {
         _logger.LogInformation("Adding event");
 
+        var eventOrganizer = await _addEventRepository.GetEventOrganizer(request.OrganizerId);
+
+        if (eventOrganizer is null)
+        {
+            return BadRequest("User not found");
+        }
+        
         byte[]? image = request.Base64Image != null ? Convert.FromBase64String(request.Base64Image) : null;
 
         var @event = Event.Create(request.Name, request.StartAtUtc, request.Location,
-            request.EventType, request.MaximumNumberOfParticipants, request.IsCompanionAllowed,
+            request.EventType, eventOrganizer, request.MaximumNumberOfParticipants, request.IsCompanionAllowed,
             request.IsPetAllowed, image);
 
         _addEventRepository.AddEvent(@event);
@@ -44,6 +52,7 @@ public record AddEventRequest(string Name,
     DateTime StartAtUtc,
     Location Location,
     EventType EventType,
+    Guid OrganizerId,
     int? MaximumNumberOfParticipants = null,
     bool IsCompanionAllowed = false,
     bool IsPetAllowed = false,
@@ -55,6 +64,7 @@ public interface IAddEventRepository
 {
     void AddEvent(Event @event);
 
+    Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default);
     Task SaveChangesAsync();
 }
 
@@ -66,6 +76,9 @@ public class AddEventRepository : IAddEventRepository
         => _dbContext = dbContext;
 
     public void AddEvent(Event @event) { _dbContext.Event.Add(@event); }
+
+    public async Task<ApplendarUser?> GetEventOrganizer(Guid organizerId, CancellationToken cancellationToken = default)
+        => await _dbContext.ApplendarUsers.FirstOrDefaultAsync(x => x.Id == organizerId, cancellationToken);
 
     public async Task SaveChangesAsync() { await _dbContext.SaveChangesAsync(); }
 }
