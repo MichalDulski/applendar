@@ -1,6 +1,7 @@
 using Applander.Domain.Entities;
 using Applander.Infrastructure;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ namespace Applendar.API.V1.Features.Users;
 [ApiController]
 [ApiVersion(1.0)]
 [Route("api/users")]
+[Authorize]
 public class UpdateApplendarUserPreferencesController : ControllerBase
 {
     private readonly ILogger<UpdateApplendarUserPreferencesController> _logger;

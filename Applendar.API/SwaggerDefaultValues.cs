@@ -46,16 +46,21 @@ public class SwaggerDefaultValues : IOperationFilter
     }
 }
 
+
 public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 {
-    private readonly IApiVersionDescriptionProvider provider;
+    private readonly IApiVersionDescriptionProvider _provider;
+    private readonly IConfiguration _configuration;
 
-    public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider)
-        => this.provider = provider;
+    public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider, IConfiguration configuration)
+    {
+        this._provider = provider;
+        this._configuration = configuration;
+    }
 
     public void Configure(SwaggerGenOptions options)
     {
-        foreach (ApiVersionDescription description in provider.ApiVersionDescriptions)
+        foreach (ApiVersionDescription description in _provider.ApiVersionDescriptions)
         {
             options.SwaggerDoc(description.GroupName,
                 new OpenApiInfo
@@ -65,5 +70,34 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
                     Version = description.ApiVersion.ToString()
                 });
         }
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            BearerFormat = "JWT",
+            Flows = new OpenApiOAuthFlows
+            {
+                Implicit = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri($"{_configuration["Authentication:Auth0:Domain"]}/authorize?audience={_configuration["Authentication:Auth0:Audience"]}"),
+                    TokenUrl = new Uri($"{_configuration["Authentication:Auth0:Domain"]}/oauth/token"),
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "openid", "Open ID" },
+                        // Add other scopes as needed
+                    }
+                }
+            }
+        }); 
+        
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+                },
+                new[] { "openid" }
+            }
+        });
     }
 }

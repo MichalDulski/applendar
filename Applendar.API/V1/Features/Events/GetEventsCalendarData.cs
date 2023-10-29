@@ -2,6 +2,7 @@ using Applander.Domain.Common;
 using Applander.Domain.Entities;
 using Applander.Infrastructure;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ namespace Applendar.API.V1.Features.Events;
 [ApiController]
 [ApiVersion(1.0)]
 [Route("api/calendar/events")]
+[Authorize]
 public class GetEventsCalendarDataController : ControllerBase
 {
     private readonly IGetEventsCalendarDataRepository _getEventsRepository;

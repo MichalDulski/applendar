@@ -4,12 +4,24 @@ using Applendar.API.V1.Features.Events;
 using Applendar.API.V1.Features.Users;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var configuration = builder.Configuration;
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddDebug();
+    loggingBuilder.SetMinimumLevel(LogLevel.Trace);
+});
 builder.Services.AddProblemDetails();
 
 builder.Services.AddApiVersioning(options =>
@@ -24,13 +36,44 @@ builder.Services.AddApiVersioning(options =>
         // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
         // note: the specified format code will format the version as "'v'major[.minor][-status]"
         options.GroupNameFormat = "'v'VVV";
-
-        // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-        // can also be used to control the format of the API version in route templates
-        options.SubstituteApiVersionInUrl = true;
     });
 
 ;
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.Authority = $"{configuration["Authentication:Auth0:Domain"]}/";
+    options.Audience = configuration["Authentication:Auth0:DomainAudience"];
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,
+        ValidIssuer = configuration["Authentication:Auth0:Domain"],
+        ValidateAudience = true,
+        ValidAudience = configuration["Authentication:Auth0:Audience"],
+        ValidateLifetime = true,
+    };
+    options.Events = new JwtBearerEvents()
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine(context.Exception);
+
+            return Task.CompletedTask;
+        }
+    };
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        policyBuilder => policyBuilder.WithOrigins("http://localhost:7185").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+});
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
@@ -59,23 +102,27 @@ builder.Services.AddTransient<IUpdateUserInvitationRepository, UpdateUserInvitat
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
 
-    app.UseSwaggerUI(options =>
+app.UseSwagger();
+
+app.UseSwaggerUI(options =>
+{
+    foreach (ApiVersionDescription description in app.DescribeApiVersions())
     {
-        foreach (ApiVersionDescription description in app.DescribeApiVersions())
-        {
-            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName);
-        }
-    });
-}
+        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName);
+    }
+
+    options.OAuthAppName("ApplendarAPI");
+    options.OAuthClientId(configuration["Authentication:Auth0:ClientId"]);
+    options.OAuthClientSecret(configuration["Authentication:Auth0:ClientSecret"]);
+    options.OAuthUsePkce();
+});
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseCors("AllowSpecificOrigin");
 app.MapControllers();
-
+IdentityModelEventSource.ShowPII = true;
 app.Run();
