@@ -16,12 +16,49 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set environment and environment-prefixed secrets
+        run: |
+            if ("${{ github.ref }}" -eq "refs/heads/main") {
+              echo "ASPNETCORE_ENVIRONMENT=Development" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "ENV_FILE=appsettings.Development.json" >> $env:GITHUB_ENV
+              echo "SQL_CONNECTION_STRING=${{ secrets.DEV_SQL_CONNECTION_STRING }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "AUTH0_DOMAIN=${{ secrets.DEV_AUTH0_DOMAIN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "AUTH0_CLIENT_ID=${{ secrets.DEV_AUTH0_CLIENT_ID }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "AUTH0_CLIENT_SECRET=${{ secrets.DEV_AUTH0_CLIENT_SECRET }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "AUTH0_AUDIENCE=${{ secrets.DEV_AUTH0_AUDIENCE }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+            } elseif ("${{ github.ref }}" -eq "refs/heads/production") {
+              echo "ASPNETCORE_ENVIRONMENT=Production" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "ENV_FILE=appsettings.Production.json" >> $env:GITHUB_ENV
+              echo "SQL_CONNECTION_STRING=${{ secrets.PROD_SQL_CONNECTION_STRING }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "AUTH0_DOMAIN=${{ secrets.PROD_AUTH0_DOMAIN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "AUTH0_CLIENT_ID=${{ secrets.PROD_AUTH0_CLIENT_ID }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "AUTH0_CLIENT_SECRET=${{ secrets.PROD_AUTH0_CLIENT_SECRET }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+              echo "AUTH0_AUDIENCE=${{ secrets.PROD_AUTH0_AUDIENCE }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+            }
+        shell: pwsh
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '7.x'
           include-prerelease: true
-
+      
+      # Inject secrets into the appropriate appsettings file
+      - name: Inject secrets into appsettings file
+        run: |
+          cd ${{ github.workspace }}/Applendar.API
+          $filePath = "${{ env.ENV_FILE }}"
+          (Get-Content $filePath -Raw | ConvertFrom-Json) | 
+          ForEach-Object {
+            $_.ConnectionStrings.SQL_CONNECTION_STRING = "${{ env.SQL_CONNECTION_STRING }}"
+            $_.Authentication.Auth0.Domain = "${{ env.AUTH0_DOMAIN }}"
+            $_.Authentication.Auth0.ClientId = "${{ env.AUTH0_CLIENT_ID }}"
+            $_.Authentication.Auth0.ClientSecret = "${{ env.AUTH0_CLIENT_SECRET }}"
+            $_.Authentication.Auth0.Audience = "${{ env.AUTH0_AUDIENCE }}"
+            $_
+          } | ConvertTo-Json -Depth 32 | Set-Content $filePath
+        shell: pwsh
+        
       - name: Build with dotnet
         run: dotnet build --configuration Debug
 
