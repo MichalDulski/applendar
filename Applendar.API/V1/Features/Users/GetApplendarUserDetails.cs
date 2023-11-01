@@ -53,9 +53,9 @@ public interface IGetApplendarUserDetailsRepository
 
 public class GetApplendarUserDetailsRepository : IGetApplendarUserDetailsRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public GetApplendarUserDetailsRepository(ApplanderDbContext dbContext)
+    public GetApplendarUserDetailsRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<ApplendarUser?> GetUserAsync(Guid applendarUserId, CancellationToken cancellationToken = default)

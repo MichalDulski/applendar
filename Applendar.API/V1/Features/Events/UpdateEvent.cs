@@ -71,9 +71,9 @@ public interface IUpdateEventRepository
 
 public class UpdateEventRepository : IUpdateEventRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public UpdateEventRepository(ApplanderDbContext dbContext)
+    public UpdateEventRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<Event?> GetEventAsync(Guid eventId, CancellationToken cancellationToken = default)

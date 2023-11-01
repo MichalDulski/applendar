@@ -63,9 +63,9 @@ public interface IDeleteEventRepository
 
 public class DeleteEventRepository : IDeleteEventRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public DeleteEventRepository(ApplanderDbContext dbContext)
+    public DeleteEventRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<Event?> GetEventAsync(Guid eventId, CancellationToken cancellationToken = default)

@@ -81,9 +81,9 @@ public interface IAddEventRepository
 
 public class AddEventRepository : IAddEventRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public AddEventRepository(ApplanderDbContext dbContext)
+    public AddEventRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public void AddEvent(Event @event) { _dbContext.Events.Add(@event); }

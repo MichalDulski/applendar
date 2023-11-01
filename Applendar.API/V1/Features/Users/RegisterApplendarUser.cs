@@ -57,9 +57,9 @@ public interface IRegisterApplendarUserRepository
 
 public class RegisterApplendarUserRepository : IRegisterApplendarUserRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public RegisterApplendarUserRepository(ApplanderDbContext dbContext)
+    public RegisterApplendarUserRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public void AddUser(ApplendarUser applendarUser)

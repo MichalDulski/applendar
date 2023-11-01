@@ -60,9 +60,9 @@ public interface IGetUserEventInvitationsRepository
 
 public class GetUserEventInvitationsRepository : IGetUserEventInvitationsRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public GetUserEventInvitationsRepository(ApplanderDbContext dbContext)
+    public GetUserEventInvitationsRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<ICollection<EventInvitation>> GetUserInvitationsAsync(Guid applendarUserId,

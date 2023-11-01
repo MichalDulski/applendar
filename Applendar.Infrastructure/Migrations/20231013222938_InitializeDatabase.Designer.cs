@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Applander.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplanderDbContext))]
+    [DbContext(typeof(ApplendarDbContext))]
     [Migration("20231013222938_InitializeDatabase")]
     partial class InitializeDatabase
     {

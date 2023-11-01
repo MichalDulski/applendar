@@ -69,9 +69,9 @@ public interface IGetEventsCalendarDataRepository
 
 public class GetEventsCalendarDataRepository : IGetEventsCalendarDataRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public GetEventsCalendarDataRepository(ApplanderDbContext dbContext)
+    public GetEventsCalendarDataRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate,

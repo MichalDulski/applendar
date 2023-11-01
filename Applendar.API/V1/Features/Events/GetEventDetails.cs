@@ -71,9 +71,9 @@ public interface IGetEventDetailsRepository
 
 public class GetEventDetailsRepository : IGetEventDetailsRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public GetEventDetailsRepository(ApplanderDbContext dbContext)
+    public GetEventDetailsRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<Event?> GetEventDetailsAsync(Guid eventId, CancellationToken cancellationToken = default)

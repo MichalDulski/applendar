@@ -3,14 +3,13 @@ using System;
 using Applander.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace Applander.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplanderDbContext))]
+    [DbContext(typeof(ApplendarDbContext))]
     partial class ApplanderDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -18,36 +17,34 @@ namespace Applander.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.12")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Applander.Domain.Entities.ApplendarUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime?>("ArchivedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("ExternalId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -58,25 +55,25 @@ namespace Applander.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime?>("ArchivedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EventType")
                         .HasColumnType("int");
 
                     b.Property<byte[]>("Image")
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("longblob");
 
                     b.Property<bool>("IsCompanionAllowed")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsPetAllowed")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("MaximumNumberOfParticipants")
                         .HasColumnType("int");
@@ -84,16 +81,16 @@ namespace Applander.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<Guid>("OrganizerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("StartAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -105,22 +102,22 @@ namespace Applander.Infrastructure.Migrations
             modelBuilder.Entity("Applander.Domain.Entities.EventInvitation", b =>
                 {
                     b.Property<Guid>("ApplendarUserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime?>("ArchivedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("ApplendarUserId", "EventId");
 
@@ -134,19 +131,19 @@ namespace Applander.Infrastructure.Migrations
                     b.OwnsOne("Applander.Domain.Entities.Preferences", "Preferences", b1 =>
                         {
                             b1.Property<Guid>("ApplendarUserId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("char(36)");
 
                             b1.Property<bool>("NotifyAboutEventsWithCompanions")
-                                .HasColumnType("bit");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<bool>("NotifyAboutEventsWithPets")
-                                .HasColumnType("bit");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<bool>("NotifyAboutOfflineEvents")
-                                .HasColumnType("bit");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<bool>("NotifyAboutOnlineEvents")
-                                .HasColumnType("bit");
+                                .HasColumnType("tinyint(1)");
 
                             b1.HasKey("ApplendarUserId");
 
@@ -171,28 +168,28 @@ namespace Applander.Infrastructure.Migrations
                     b.OwnsOne("Applander.Domain.Entities.Location", "Location", b1 =>
                         {
                             b1.Property<Guid>("EventId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("char(36)");
 
                             b1.Property<string>("Address")
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("longtext");
 
                             b1.Property<string>("City")
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("longtext");
 
                             b1.Property<string>("Country")
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("longtext");
 
                             b1.Property<bool>("IsOnline")
-                                .HasColumnType("bit");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<string>("Name")
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("longtext");
 
                             b1.Property<string>("Url")
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("longtext");
 
                             b1.Property<string>("ZipCode")
-                                .HasColumnType("nvarchar(max)");
+                                .HasColumnType("longtext");
 
                             b1.HasKey("EventId");
 

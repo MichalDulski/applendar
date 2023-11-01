@@ -1,14 +1,22 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Applander.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplanderDbContext>(options => { options.UseSqlServer(connectionString); });
+        var sqlServerConnectionString = configuration.GetConnectionString("SQL_CONNECTION_STRING");
 
-        return services;
+        if (!string.IsNullOrEmpty(sqlServerConnectionString))
+        {
+            services.AddDbContext<ApplendarDbContext>(options => options.UseSqlServer(sqlServerConnectionString));
+
+            return services;
+        }
+
+        throw new Exception("Missing SQL_CONNECTION_STRING environment variable.");
     }
 }

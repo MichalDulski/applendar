@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Applander.Infrastructure;
 
-public class ApplanderDbContext : DbContext
+public class ApplendarDbContext : DbContext
 {
-    public ApplanderDbContext(DbContextOptions<ApplanderDbContext> options) : base(options) { }
+    public ApplendarDbContext(DbContextOptions<ApplendarDbContext> options) : base(options) { }
 
     public DbSet<ApplendarUser> ApplendarUsers { get; set; }
     public DbSet<EventInvitation> EventInvitations { get; set; }

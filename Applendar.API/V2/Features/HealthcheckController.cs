@@ -15,5 +15,8 @@ public class HealthcheckController : ControllerBase
 
     [HttpGet]
     public ActionResult<string> Get()
-        => Ok("stara cichego");
+    {
+        throw new UnauthorizedAccessException();
+        return Ok("healthy");
+    }
 }

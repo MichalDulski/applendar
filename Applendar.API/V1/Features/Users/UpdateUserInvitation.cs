@@ -63,9 +63,9 @@ public interface IUpdateUserInvitationRepository
 
 public class UpdateUserInvitationRepository : IUpdateUserInvitationRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public UpdateUserInvitationRepository(ApplanderDbContext dbContext)
+    public UpdateUserInvitationRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<EventInvitation?> GetUserInvitationAsync(Guid applendarUserId,

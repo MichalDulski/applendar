@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Applander.Infrastructure;
+using Applendar.API.Common;
 using Applendar.API.V1.Features.Events;
 using Applendar.API.V1.Features.Users;
 using Asp.Versioning;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -16,12 +18,9 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
-builder.Services.AddLogging(loggingBuilder =>
-{
-    loggingBuilder.AddConsole();
-    loggingBuilder.AddDebug();
-    loggingBuilder.SetMinimumLevel(LogLevel.Trace);
-});
+builder.Host.UseSerilog(((context, services,
+    options) => options.ReadFrom.Configuration(configuration)));
+
 builder.Services.AddProblemDetails();
 
 builder.Services.AddApiVersioning(options =>
@@ -85,7 +84,7 @@ builder.Services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefault
 
 string? connection = builder.Configuration.GetConnectionString("SQL_CONNECTION_STRING");
 
-builder.Services.AddInfrastructure(connection);
+builder.Services.AddInfrastructure(configuration);
 
 builder.Services.AddTransient<IAddEventRepository, AddEventRepository>();
 builder.Services.AddTransient<IGetEventsRepository, GetEventsRepository>();
@@ -98,11 +97,12 @@ builder.Services.AddTransient<IUpdateApplendarUserPreferencesRepository, UpdateA
 builder.Services.AddTransient<IGetApplendarUserDetailsRepository, GetApplendarUserDetailsRepository>();
 builder.Services.AddTransient<IGetUserEventInvitationsRepository, GetUserEventInvitationsRepository>();
 builder.Services.AddTransient<IUpdateUserInvitationRepository, UpdateUserInvitationRepository>();
+builder.Services.AddTransient<IGetLoggedUserDataRepository, GetLoggedUserDataRepository>();
 
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseMiddleware<ApplendarExceptionHandlerMiddleware>();
 app.UseSwagger();
 
 app.UseSwaggerUI(options =>

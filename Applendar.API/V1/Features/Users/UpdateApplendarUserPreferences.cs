@@ -59,9 +59,9 @@ public interface IUpdateApplendarUserPreferencesRepository
 
 public class UpdateApplendarUserPreferencesRepository : IUpdateApplendarUserPreferencesRepository
 {
-    private readonly ApplanderDbContext _dbContext;
+    private readonly ApplendarDbContext _dbContext;
 
-    public UpdateApplendarUserPreferencesRepository(ApplanderDbContext dbContext)
+    public UpdateApplendarUserPreferencesRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<ApplendarUser?> GetUserAsync(Guid applendarUserId, CancellationToken cancellationToken = default)
