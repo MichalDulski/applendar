@@ -1,8 +1,10 @@
 using System.Text.Json.Serialization;
 using Applander.Infrastructure;
+using Applendar.API;
 using Applendar.API.Common;
-using Applendar.API.V1.Features.Events;
-using Applendar.API.V1.Features.Users;
+using Applendar.API.Features;
+using Applendar.API.Features.Events.V1;
+using Applendar.API.Features.Users.V1;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,8 +15,6 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 var configuration = builder.Configuration;
 
@@ -77,7 +77,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
@@ -85,7 +84,6 @@ builder.Services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefault
 string? connection = builder.Configuration.GetConnectionString("SQL_CONNECTION_STRING");
 
 builder.Services.AddInfrastructure(configuration);
-
 builder.Services.AddTransient<IAddEventRepository, AddEventRepository>();
 builder.Services.AddTransient<IGetEventsRepository, GetEventsRepository>();
 builder.Services.AddTransient<IRegisterApplendarUserRepository, RegisterApplendarUserRepository>();
@@ -101,7 +99,6 @@ builder.Services.AddTransient<IGetLoggedUserDataRepository, GetLoggedUserDataRep
 
 WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.UseMiddleware<ApplendarExceptionHandlerMiddleware>();
 app.UseSwagger();
 
@@ -119,7 +116,6 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowSpecificOrigin");

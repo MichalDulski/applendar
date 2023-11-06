@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.V1.Features.Events;
+namespace Applendar.API.Features.Events.V1;
 
 [ApiController]
 [ApiVersion(1.0)]

@@ -4,7 +4,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Applendar.API.V1.Features.Users;
+namespace Applendar.API.Features.Users.V1;
 
 [ApiController]
 [ApiVersion(1.0)]
