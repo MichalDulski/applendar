@@ -96,6 +96,7 @@ builder.Services.AddTransient<IGetApplendarUserDetailsRepository, GetApplendarUs
 builder.Services.AddTransient<IGetUserEventInvitationsRepository, GetUserEventInvitationsRepository>();
 builder.Services.AddTransient<IUpdateUserInvitationRepository, UpdateUserInvitationRepository>();
 builder.Services.AddTransient<IGetLoggedUserDataRepository, GetLoggedUserDataRepository>();
+builder.Services.AddTransient<LogUserLastActivityMiddleware>();
 
 WebApplication app = builder.Build();
 
@@ -118,6 +119,7 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<LogUserLastActivityMiddleware>();
 app.UseCors("AllowSpecificOrigin");
 app.MapControllers();
 IdentityModelEventSource.ShowPII = true;

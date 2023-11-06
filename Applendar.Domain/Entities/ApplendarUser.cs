@@ -13,6 +13,8 @@ public class ApplendarUser : BaseEntity
     public virtual ICollection<Event> OrganizedEvents { get; set; } = new List<Event>();
 
     public Preferences Preferences { get; set; }
+    
+    public DateTime LastActivityDateUtc { get; set; }
 
     public static ApplendarUser Create(string firstName,
         string lastName,
@@ -28,6 +30,12 @@ public class ApplendarUser : BaseEntity
         };
 
     public void UpdateUserPreferences(Preferences preferences) { Preferences = preferences; }
+
+    public void LogActivity()
+    {
+        LastActivityDateUtc = DateTime.UtcNow;
+    }
+
 }
 
 public record Preferences(bool NotifyAboutOnlineEvents,
