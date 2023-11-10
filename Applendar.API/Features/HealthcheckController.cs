@@ -8,6 +8,7 @@ namespace Applendar.API.Features;
 [Route("api/healthcheck")]
 public class HealthcheckController : ControllerBase
 {
+    private const string Message = "healthy";
     private readonly ILogger<HealthcheckController> _logger;
 
     public HealthcheckController(ILogger<HealthcheckController> logger)
@@ -15,7 +16,10 @@ public class HealthcheckController : ControllerBase
 
     [HttpGet]
     public ActionResult<string> Get()
-        => Ok("healthy");
+    {
+        _logger.LogInformation(Message);
+        return Ok(Message);
+    }
 }
 
 
@@ -24,6 +28,7 @@ public class HealthcheckController : ControllerBase
 [Route("api/healthcheck")]
 public class HealthcheckV2Controller : ControllerBase
 {
+    private const string Message = "healthy";
     private readonly ILogger<HealthcheckV2Controller> _logger;
 
     public HealthcheckV2Controller(ILogger<HealthcheckV2Controller> logger)
@@ -31,5 +36,8 @@ public class HealthcheckV2Controller : ControllerBase
 
     [HttpGet]
     public ActionResult<string> Get()
-        => Ok("healthy");
+    {
+        _logger.LogInformation(Message);
+        return Ok(Message);
+    }
 }
