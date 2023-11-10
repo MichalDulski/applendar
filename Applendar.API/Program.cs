@@ -3,13 +3,10 @@ using Applander.Infrastructure;
 using Applendar.API;
 using Applendar.API.Common;
 using Applendar.API.Features;
-using Applendar.API.Features.Events.V1;
-using Applendar.API.Features.Users.V1;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -32,12 +29,8 @@ builder.Services.AddApiVersioning(options =>
     .AddMvc()
     .AddApiExplorer(options =>
     {
-        // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-        // note: the specified format code will format the version as "'v'major[.minor][-status]"
         options.GroupNameFormat = "'v'VVV";
     });
-
-;
 
 builder.Services.AddAuthentication(options =>
 {
@@ -81,28 +74,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
 
-string? connection = builder.Configuration.GetConnectionString("SQL_CONNECTION_STRING");
-
 builder.Services.AddInfrastructure(configuration);
-builder.Services.AddTransient<IAddEventRepository, AddEventRepository>();
-builder.Services.AddTransient<IGetEventsRepository, GetEventsRepository>();
-builder.Services.AddTransient<IRegisterApplendarUserRepository, RegisterApplendarUserRepository>();
-builder.Services.AddTransient<IGetEventDetailsRepository, GetEventDetailsRepository>();
-builder.Services.AddTransient<IGetEventsCalendarDataRepository, GetEventsCalendarDataRepository>();
-builder.Services.AddTransient<IDeleteEventRepository, DeleteEventRepository>();
-builder.Services.AddTransient<IUpdateEventRepository, UpdateEventRepository>();
-builder.Services.AddTransient<IUpdateApplendarUserPreferencesRepository, UpdateApplendarUserPreferencesRepository>();
-builder.Services.AddTransient<IGetApplendarUserDetailsRepository, GetApplendarUserDetailsRepository>();
-builder.Services.AddTransient<IGetUserEventInvitationsRepository, GetUserEventInvitationsRepository>();
-builder.Services.AddTransient<IUpdateUserInvitationRepository, UpdateUserInvitationRepository>();
-builder.Services.AddTransient<IGetLoggedUserDataRepository, GetLoggedUserDataRepository>();
-builder.Services.AddTransient<LogUserLastActivityMiddleware>();
+builder.Services.AddFeaturesDependencies();
 
 WebApplication app = builder.Build();
 
 app.UseMiddleware<ApplendarExceptionHandlerMiddleware>();
-app.UseSwagger();
+app.UseMiddleware<LogUserLastActivityMiddleware>();
 
+app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     foreach (ApiVersionDescription description in app.DescribeApiVersions())
@@ -119,8 +99,7 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<LogUserLastActivityMiddleware>();
 app.UseCors("AllowSpecificOrigin");
 app.MapControllers();
-IdentityModelEventSource.ShowPII = true;
+
 app.Run();
