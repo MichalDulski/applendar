@@ -11,51 +11,51 @@ namespace Applendar.API.Features.Users.V1;
 [ApiVersion(1.0)]
 [Route("api/users")]
 [Authorize]
-public class GetApplendarUserDetailsController : ControllerBase
+public class GetApplendarUserProfileController : ControllerBase
 {
-    private readonly ILogger<GetApplendarUserDetailsController> _logger;
-    private readonly IGetApplendarUserDetailsRepository _repository;
+    private readonly ILogger<GetApplendarUserProfileController> _logger;
+    private readonly IGetApplendarUserProfileRepository _repository;
 
-    public GetApplendarUserDetailsController(IGetApplendarUserDetailsRepository repository,
-        ILogger<GetApplendarUserDetailsController> logger)
+    public GetApplendarUserProfileController(IGetApplendarUserProfileRepository repository,
+        ILogger<GetApplendarUserProfileController> logger)
     {
         _repository = repository;
         _logger = logger;
     }
 
     [HttpGet("{applendarUserId}")]
-    public async Task<ActionResult<GetApplendarUserDetailsResponse>> Get([FromRoute] Guid applendarUserId)
+    public async Task<ActionResult<ApplendarUserProfile>> Get([FromRoute] Guid applendarUserId)
     {
-        _logger.LogInformation("Get Applander user details");
+        _logger.LogDebug("Invoked Get Applander user profile");
 
         ApplendarUser? applendarUser = await _repository.GetUserAsync(applendarUserId);
 
         if (applendarUser is null)
             return BadRequest("User not found");
 
-        var response = new GetApplendarUserDetailsResponse(applendarUser.Id, applendarUser.FirstName,
+        var response = new ApplendarUserProfile(applendarUser.Id, applendarUser.FirstName,
             applendarUser.LastName, applendarUser.ExternalId, applendarUser.Preferences);
 
         return Ok(response);
     }
 }
 
-public record GetApplendarUserDetailsResponse(Guid Id,
+public record ApplendarUserProfile(Guid Id,
     string FirstName,
     string LastName,
     string ExternalId,
     Preferences Preferences);
 
-public interface IGetApplendarUserDetailsRepository
+public interface IGetApplendarUserProfileRepository
 {
     Task<ApplendarUser?> GetUserAsync(Guid applendarUserId, CancellationToken cancellationToken = default);
 }
 
-public class GetApplendarUserDetailsRepository : IGetApplendarUserDetailsRepository
+public class GetApplendarUserProfileRepository : IGetApplendarUserProfileRepository
 {
     private readonly ApplendarDbContext _dbContext;
 
-    public GetApplendarUserDetailsRepository(ApplendarDbContext dbContext)
+    public GetApplendarUserProfileRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<ApplendarUser?> GetUserAsync(Guid applendarUserId, CancellationToken cancellationToken = default)
