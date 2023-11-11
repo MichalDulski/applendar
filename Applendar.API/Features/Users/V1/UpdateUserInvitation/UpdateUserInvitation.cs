@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Users.V1;
+namespace Applendar.API.Features.Users.V1.UpdateUserInvitation;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -61,7 +61,7 @@ public interface IUpdateUserInvitationRepository
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public class UpdateUserInvitationRepository : IUpdateUserInvitationRepository
+internal class UpdateUserInvitationRepository : IUpdateUserInvitationRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

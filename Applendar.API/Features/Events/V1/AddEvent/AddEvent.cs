@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Events.V1;
+namespace Applendar.API.Features.Events.V1.AddEvent;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -79,7 +79,7 @@ public interface IAddEventRepository
     Task SaveChangesAsync();
 }
 
-public class AddEventRepository : IAddEventRepository
+internal class AddEventRepository : IAddEventRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

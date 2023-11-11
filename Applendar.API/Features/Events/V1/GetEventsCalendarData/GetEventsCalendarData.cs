@@ -6,47 +6,48 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Events.V1;
+namespace Applendar.API.Features.Events.V1.GetEventsCalendarData;
 
 [ApiController]
 [ApiVersion(1.0)]
-[Route("api/events")]
+[Route("api/calendar/events")]
 [Authorize]
-public class GetEventsController : ControllerBase
+public class GetEventsCalendarDataController : ControllerBase
 {
-    private readonly IGetEventsRepository _getEventsRepository;
-    private readonly ILogger<GetEventsController> _logger;
+    private readonly IGetEventsCalendarDataRepository _getEventsRepository;
+    private readonly ILogger<GetEventsCalendarDataController> _logger;
 
-    public GetEventsController(ILogger<GetEventsController> logger, IGetEventsRepository getEventsRepository)
+    public GetEventsCalendarDataController(ILogger<GetEventsCalendarDataController> logger,
+        IGetEventsCalendarDataRepository getEventsRepository)
     {
         _logger = logger;
         _getEventsRepository = getEventsRepository;
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetEventDto[]>> Get([FromQuery] DateTime? fromDate,
-        [FromQuery] DateTime? toDate,
+    public async Task<ActionResult<Dictionary<DateTime, List<GetEventCalendarDataDto>>>> Get(
+        [FromQuery] DateTime? fromDate = null,
+        [FromQuery] DateTime? toDate = null,
         [FromQuery] bool withArchived = false)
     {
-        _logger.LogInformation("Get events");
+        _logger.LogInformation("Get events calendar data");
         ICollection<Event> events = await _getEventsRepository.GetEventsInRangeAsync(fromDate, toDate, withArchived);
 
-        List<GetEventDto> eventsDtos = events.Select(x =>
+        Dictionary<DateTime, List<GetEventCalendarDataDto>> eventsDto = events.Select(x =>
             {
-                string? image = x.Image != null ? Convert.ToBase64String(x.Image) : null;
-
-                return new GetEventDto(x.Id, x.Name, x.StartAtUtc,
+                return new GetEventCalendarDataDto(x.Id, x.Name, x.StartAtUtc,
                     x.Location, x.EventType, x.OrganizerId,
-                    x.MaximumNumberOfParticipants, x.IsCompanionAllowed, x.IsPetAllowed,
-                    image);
+                    x.MaximumNumberOfParticipants, x.IsCompanionAllowed, x.IsPetAllowed);
             })
-            .ToList();
+            .GroupBy(x => x.StartAtUtc)
+            .OrderBy(x => x.Key)
+            .ToDictionary(x => x.Key, x => x.ToList());
 
-        return Ok(eventsDtos);
+        return Ok(eventsDto);
     }
 }
 
-public record GetEventDto(Guid Id,
+public record GetEventCalendarDataDto(Guid Id,
     string Name,
     DateTime StartAtUtc,
     Location Location,
@@ -54,10 +55,9 @@ public record GetEventDto(Guid Id,
     Guid OrganizerId,
     int? MaximumNumberOfParticipants = null,
     bool IsCompanionAllowed = false,
-    bool IsPetAllowed = false,
-    string? Base64Image = null);
+    bool IsPetAllowed = false);
 
-public interface IGetEventsRepository
+public interface IGetEventsCalendarDataRepository
 {
     Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate,
         DateTime? toDate,
@@ -65,11 +65,11 @@ public interface IGetEventsRepository
         CancellationToken cancellationToken = default);
 }
 
-public class GetEventsRepository : IGetEventsRepository
+internal class GetEventsCalendarDataRepository : IGetEventsCalendarDataRepository
 {
     private readonly ApplendarDbContext _dbContext;
 
-    public GetEventsRepository(ApplendarDbContext dbContext)
+    public GetEventsCalendarDataRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate,

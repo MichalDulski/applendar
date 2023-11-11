@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Users.V1;
+namespace Applendar.API.Features.Users.V1.UpdateApplendarUserPreferences;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -57,7 +57,7 @@ public interface IUpdateApplendarUserPreferencesRepository
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public class UpdateApplendarUserPreferencesRepository : IUpdateApplendarUserPreferencesRepository
+internal class UpdateApplendarUserPreferencesRepository : IUpdateApplendarUserPreferencesRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

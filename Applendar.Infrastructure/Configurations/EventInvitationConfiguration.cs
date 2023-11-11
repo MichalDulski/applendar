@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Applander.Infrastructure.Configurations;
 
-public class EventInvitationConfiguration : IEntityTypeConfiguration<EventInvitation>
+internal class EventInvitationConfiguration : IEntityTypeConfiguration<EventInvitation>
 {
     public void Configure(EntityTypeBuilder<EventInvitation> builder)
     {

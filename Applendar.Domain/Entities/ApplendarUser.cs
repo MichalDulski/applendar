@@ -2,15 +2,30 @@ using Applander.Domain.Common;
 
 namespace Applander.Domain.Entities;
 
-public class ApplendarUser : BaseEntity
+public sealed class ApplendarUser : BaseEntity
 {
-    public virtual ICollection<EventInvitation> EventInvitations { get; set; } = new List<EventInvitation>();
+    private ApplendarUser() { }
+
+    private ApplendarUser(Guid id,
+        string externalId,
+        string firstName,
+        string lastName,
+        Preferences preferences)
+    {
+        Id = id;
+        ExternalId = externalId;
+        FirstName = firstName;
+        LastName = lastName;
+        Preferences = preferences;
+    }
+
+    public ICollection<EventInvitation> EventInvitations { get; set; } = new List<EventInvitation>();
 
     // Auth0 user id/subject
     public string ExternalId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public virtual ICollection<Event> OrganizedEvents { get; set; } = new List<Event>();
+    public ICollection<Event> OrganizedEvents { get; set; } = new List<Event>();
 
     public Preferences Preferences { get; set; }
     
@@ -19,15 +34,9 @@ public class ApplendarUser : BaseEntity
     public static ApplendarUser Create(string firstName,
         string lastName,
         string externalId)
-        => new()
-        {
-            Id = Guid.NewGuid(),
-            FirstName = firstName,
-            LastName = lastName,
-            ExternalId = externalId,
-            Preferences = new Preferences(true, true, true,
-                true)
-        };
+        => new(Guid.Empty, firstName, lastName,
+            externalId, new Preferences(true, true, true,
+                true));
 
     public void UpdateUserPreferences(Preferences preferences) { Preferences = preferences; }
 

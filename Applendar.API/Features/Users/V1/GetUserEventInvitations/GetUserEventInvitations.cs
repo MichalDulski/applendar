@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Users.V1;
+namespace Applendar.API.Features.Users.V1.GetUserEventInvitations;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -58,7 +58,7 @@ public interface IGetUserEventInvitationsRepository
         CancellationToken cancellationToken = default);
 }
 
-public class GetUserEventInvitationsRepository : IGetUserEventInvitationsRepository
+internal class GetUserEventInvitationsRepository : IGetUserEventInvitationsRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

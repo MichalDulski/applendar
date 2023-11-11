@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Events.V1;
+namespace Applendar.API.Features.Events.V1.DeleteEvent;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -61,7 +61,7 @@ public interface IDeleteEventRepository
     Task SaveChangesAsync();
 }
 
-public class DeleteEventRepository : IDeleteEventRepository
+internal class DeleteEventRepository : IDeleteEventRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

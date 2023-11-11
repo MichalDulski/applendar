@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Events.V1;
+namespace Applendar.API.Features.Events.V1.UpdateEvent;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -14,10 +14,10 @@ namespace Applendar.API.Features.Events.V1;
 [Authorize]
 public class UpdateEventController : ControllerBase
 {
-    private readonly ILogger<AddEventController> _logger;
+    private readonly ILogger<UpdateEventController> _logger;
     private readonly IUpdateEventRepository _updateEventRepository;
 
-    public UpdateEventController(ILogger<AddEventController> logger, IUpdateEventRepository updateEventRepository)
+    public UpdateEventController(ILogger<UpdateEventController> logger, IUpdateEventRepository updateEventRepository)
     {
         _logger = logger;
         _updateEventRepository = updateEventRepository;
@@ -52,7 +52,6 @@ public record UpdateEventRequest(string Name,
     DateTime StartAtUtc,
     Location Location,
     EventType EventType,
-    Guid OrganizerId,
     int? MaximumNumberOfParticipants = null,
     bool IsCompanionAllowed = false,
     bool IsPetAllowed = false,
@@ -69,7 +68,7 @@ public interface IUpdateEventRepository
     Task SaveChangesAsync();
 }
 
-public class UpdateEventRepository : IUpdateEventRepository
+internal class UpdateEventRepository : IUpdateEventRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

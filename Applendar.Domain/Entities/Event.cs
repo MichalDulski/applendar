@@ -2,8 +2,33 @@ using Applander.Domain.Common;
 
 namespace Applander.Domain.Entities;
 
-public class Event : BaseEntity
+public sealed class Event : BaseEntity
 {
+    private Event() { }
+    
+    private Event(Guid id,
+        string name,
+        DateTime startAtUtc,
+        Location location,
+        EventType eventType,
+        Guid organizerId,
+        int? maximumNumberOfParticipants = null,
+        bool isCompanionAllowed = false,
+        bool isPetAllowed = false,
+        byte[]? image = null)
+    {
+        Id = id;
+        Name = name;
+        StartAtUtc = startAtUtc;
+        Location = location;
+        EventType = eventType;
+        OrganizerId = organizerId;
+        MaximumNumberOfParticipants = maximumNumberOfParticipants;
+        IsCompanionAllowed = isCompanionAllowed;
+        IsPetAllowed = isPetAllowed;
+        Image = image;
+    }
+
     public bool IsArchived => ArchivedAtUtc.HasValue;
     public bool IsNumberOfParticipantsLimited => MaximumNumberOfParticipants.HasValue;
 
@@ -16,8 +41,7 @@ public class Event : BaseEntity
     public Location Location { get; set; }
     public int? MaximumNumberOfParticipants { get; set; }
     public string Name { get; set; }
-    public virtual ApplendarUser Organizer { get; set; }
-
+    public ApplendarUser Organizer { get; set; }
     public Guid OrganizerId { get; set; }
     public DateTime StartAtUtc { get; set; }
 
@@ -30,21 +54,13 @@ public class Event : BaseEntity
         bool isCompanionAllowed = false,
         bool isPetAllowed = false,
         byte[]? image = null)
-        => new()
-        {
-            Id = Guid.NewGuid(),
-            Name = name,
-            StartAtUtc = startAtUtc,
-            Location = location,
-            EventType = eventType,
-            MaximumNumberOfParticipants = maximumNumberOfParticipants,
-            IsCompanionAllowed = isCompanionAllowed,
-            IsPetAllowed = isPetAllowed,
-            Image = image,
-            Organizer = organizer
-        };
+        => new(Guid.Empty, name, startAtUtc,
+            location, eventType, organizer.Id,
+            maximumNumberOfParticipants, isCompanionAllowed, isPetAllowed,
+            image);
 
-    public void Archive() { ArchivedAtUtc = DateTime.UtcNow; }
+    public void Archive()
+        => ArchivedAtUtc = DateTime.UtcNow;
 
     public void InviteUser(ApplendarUser user)
     {
@@ -70,49 +86,15 @@ public class Event : BaseEntity
         IsPetAllowed = isPetAllowed;
         Image = image;
     }
+
+    public void ChangeLocation(Location location)
+        => Location = location;
 }
 
-public record Location
-{
-    public Location(bool isOnline,
-        string? url = null,
-        string? name = null,
-        string? city = null,
-        string? zipCode = null,
-        string? address = null,
-        string? country = null)
-    {
-        Name = name;
-        IsOnline = isOnline;
-        Url = url;
-        City = city;
-        ZipCode = zipCode;
-        Address = address;
-        Country = country;
-    }
-
-    public string? Name { get; init; }
-    public string? City { get; init; }
-    public string? ZipCode { get; init; }
-    public string? Address { get; init; }
-    public string? Country { get; init; }
-    public bool IsOnline { get; set; }
-    public string? Url { get; set; } = string.Empty;
-
-    public void Deconstruct(out bool isOnline,
-        out string? url,
-        out string? name,
-        out string? city,
-        out string? zipCode,
-        out string? address,
-        out string? country)
-    {
-        isOnline = IsOnline;
-        url = Url;
-        name = Name;
-        city = City;
-        zipCode = ZipCode;
-        address = Address;
-        country = Country;
-    }
-}
+public record Location(bool IsOnline,
+    string? Url = null,
+    string? Name = null,
+    string? City = null,
+    string? ZipCode = null,
+    string? Address = null,
+    string? Country = null);

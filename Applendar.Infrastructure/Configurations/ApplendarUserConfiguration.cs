@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Applander.Infrastructure.Configurations;
 
-public class ApplendarUserConfiguration : IEntityTypeConfiguration<ApplendarUser>
+internal class ApplendarUserConfiguration : IEntityTypeConfiguration<ApplendarUser>
 {
     public void Configure(EntityTypeBuilder<ApplendarUser> builder)
     {

@@ -23,21 +23,21 @@ public class HealthcheckController : ControllerBase
 }
 
 
-[ApiController]
-[ApiVersion(2.0)]
-[Route("api/healthcheck")]
-public class HealthcheckV2Controller : ControllerBase
-{
-    private const string Message = "healthy";
-    private readonly ILogger<HealthcheckV2Controller> _logger;
-
-    public HealthcheckV2Controller(ILogger<HealthcheckV2Controller> logger)
-        => _logger = logger;
-
-    [HttpGet]
-    public ActionResult<string> Get()
-    {
-        _logger.LogInformation(Message);
-        return Ok(Message);
-    }
-}
+// [ApiController]
+// [ApiVersion(2.0)]
+// [Route("api/healthcheck")]
+// public class HealthcheckV2Controller : ControllerBase
+// {
+//     private const string Message = "healthy";
+//     private readonly ILogger<HealthcheckV2Controller> _logger;
+//
+//     public HealthcheckV2Controller(ILogger<HealthcheckV2Controller> logger)
+//         => _logger = logger;
+//
+//     [HttpGet]
+//     public ActionResult<string> Get()
+//     {
+//         _logger.LogInformation(Message);
+//         return Ok(Message);
+//     }
+// }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Applander.Infrastructure.Configurations;
 
-public class EventConfiguration : IEntityTypeConfiguration<Event>
+internal class EventConfiguration : IEntityTypeConfiguration<Event>
 {
     public void Configure(EntityTypeBuilder<Event> builder)
     {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Users.V1;
+namespace Applendar.API.Features.Users.V1.GetLoggedUserData;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -53,7 +53,7 @@ public interface IGetLoggedUserDataRepository
     Task<ApplendarUser?> GetUserAsync(string externalUserId, CancellationToken cancellationToken = default);
 }
 
-public class GetLoggedUserDataRepository : IGetLoggedUserDataRepository
+internal class GetLoggedUserDataRepository : IGetLoggedUserDataRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

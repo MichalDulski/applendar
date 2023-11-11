@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Events.V1;
+namespace Applendar.API.Features.Events.V1.GetEventDetails;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -69,7 +69,7 @@ public interface IGetEventDetailsRepository
     Task<Event?> GetEventDetailsAsync(Guid eventId, CancellationToken cancellationToken = default);
 }
 
-public class GetEventDetailsRepository : IGetEventDetailsRepository
+internal class GetEventDetailsRepository : IGetEventDetailsRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

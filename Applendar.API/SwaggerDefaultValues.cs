@@ -101,5 +101,8 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
                 new[] { "openid" }
             }
         });
+        
+        
+        
     }
 }

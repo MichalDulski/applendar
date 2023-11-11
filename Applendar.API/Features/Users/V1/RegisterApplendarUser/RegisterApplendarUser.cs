@@ -1,10 +1,11 @@
+using System.Security.Claims;
 using Applander.Domain.Entities;
 using Applander.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Applendar.API.Features.Users.V1;
+namespace Applendar.API.Features.Users.V1.RegisterApplendarUser;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -13,12 +14,12 @@ namespace Applendar.API.Features.Users.V1;
 public class RegisterApplendarUserController : ControllerBase
 {
     private readonly ILogger<RegisterApplendarUserController> _logger;
-    private readonly IRegisterApplendarUserRepository _registerApplendarUserRepository;
+    private readonly IRegisterApplendarUserRepository _repository;
 
-    public RegisterApplendarUserController(IRegisterApplendarUserRepository registerApplendarUserRepository,
+    public RegisterApplendarUserController(IRegisterApplendarUserRepository repository,
         ILogger<RegisterApplendarUserController> logger)
     {
-        _registerApplendarUserRepository = registerApplendarUserRepository;
+        _repository = repository;
         _logger = logger;
     }
 
@@ -29,8 +30,15 @@ public class RegisterApplendarUserController : ControllerBase
 
         var user = ApplendarUser.Create(request.FirstName, request.LastName, request.ExternalId);
 
-        _registerApplendarUserRepository.AddUser(user);
-        await _registerApplendarUserRepository.SaveChangesAsync();
+        string? externalUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        if (externalUserId is null)
+        {
+            return BadRequest("There was a problem with your token");
+        }
+        
+        _repository.AddUser(user);
+        await _repository.SaveChangesAsync();
 
         var response = new RegisterUserResponse(user.Id, user.FirstName, user.LastName,
             user.ExternalId);
@@ -55,7 +63,7 @@ public interface IRegisterApplendarUserRepository
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public class RegisterApplendarUserRepository : IRegisterApplendarUserRepository
+internal class RegisterApplendarUserRepository : IRegisterApplendarUserRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

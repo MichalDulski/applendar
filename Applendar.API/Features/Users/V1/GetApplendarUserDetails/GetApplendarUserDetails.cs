@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Users.V1;
+namespace Applendar.API.Features.Users.V1.GetApplendarUserDetails;
 
 [ApiController]
 [ApiVersion(1.0)]
@@ -51,7 +51,7 @@ public interface IGetApplendarUserProfileRepository
     Task<ApplendarUser?> GetUserAsync(Guid applendarUserId, CancellationToken cancellationToken = default);
 }
 
-public class GetApplendarUserProfileRepository : IGetApplendarUserProfileRepository
+internal class GetApplendarUserProfileRepository : IGetApplendarUserProfileRepository
 {
     private readonly ApplendarDbContext _dbContext;
 

@@ -6,50 +6,47 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Applendar.API.Features.Events.V1;
+namespace Applendar.API.Features.Events.V1.GetEvents;
 
 [ApiController]
 [ApiVersion(1.0)]
-[Route("api/calendar/events")]
+[Route("api/events")]
 [Authorize]
-public class GetEventsCalendarDataController : ControllerBase
+public class GetEventsController : ControllerBase
 {
-    private readonly IGetEventsCalendarDataRepository _getEventsRepository;
+    private readonly IGetEventsRepository _getEventsRepository;
     private readonly ILogger<GetEventsController> _logger;
 
-    public GetEventsCalendarDataController(ILogger<GetEventsController> logger,
-        IGetEventsCalendarDataRepository getEventsRepository)
+    public GetEventsController(ILogger<GetEventsController> logger, IGetEventsRepository getEventsRepository)
     {
         _logger = logger;
         _getEventsRepository = getEventsRepository;
     }
 
     [HttpGet]
-    public async Task<ActionResult<Dictionary<DateTime, List<GetEventCalendarDataDto>>>> Get(
-        [FromQuery] DateTime? fromDate = null,
-        [FromQuery] DateTime? toDate = null,
+    public async Task<ActionResult<GetEventDto[]>> Get([FromQuery] DateTime? fromDate,
+        [FromQuery] DateTime? toDate,
         [FromQuery] bool withArchived = false)
     {
-        _logger.LogInformation("Get events calendar data");
+        _logger.LogInformation("Get events");
         ICollection<Event> events = await _getEventsRepository.GetEventsInRangeAsync(fromDate, toDate, withArchived);
 
-        Dictionary<DateTime, List<GetEventCalendarDataDto>> eventsDto = events.Select(x =>
+        List<GetEventDto> eventsDtos = events.Select(x =>
             {
-                return new GetEventCalendarDataDto(x.Id, x.Name, x.StartAtUtc,
-                    x.Location, x.EventType, x.OrganizerId,
-                    x.MaximumNumberOfParticipants, x.IsCompanionAllowed, x.IsPetAllowed);
-            })
-            .GroupBy(x => x.StartAtUtc)
-            .OrderBy(x => x.Key)
-            .ToDictionary(x => x.Key, x => x.ToList());
+                string? image = x.Image != null ? Convert.ToBase64String(x.Image) : null;
 
-        return Ok(eventsDto);
+                return new GetEventDto(x.Id, x.Name, x.StartAtUtc,
+                    x.Location, x.EventType, x.OrganizerId,
+                    x.MaximumNumberOfParticipants, x.IsCompanionAllowed, x.IsPetAllowed,
+                    image);
+            })
+            .ToList();
+
+        return Ok(eventsDtos);
     }
 }
 
-public record GetEventsCalendarDataResult(Dictionary<DateTime, List<GetEventCalendarDataDto>> Dates);
-
-public record GetEventCalendarDataDto(Guid Id,
+public record GetEventDto(Guid Id,
     string Name,
     DateTime StartAtUtc,
     Location Location,
@@ -57,9 +54,10 @@ public record GetEventCalendarDataDto(Guid Id,
     Guid OrganizerId,
     int? MaximumNumberOfParticipants = null,
     bool IsCompanionAllowed = false,
-    bool IsPetAllowed = false);
+    bool IsPetAllowed = false,
+    string? Base64Image = null);
 
-public interface IGetEventsCalendarDataRepository
+public interface IGetEventsRepository
 {
     Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate,
         DateTime? toDate,
@@ -67,11 +65,11 @@ public interface IGetEventsCalendarDataRepository
         CancellationToken cancellationToken = default);
 }
 
-public class GetEventsCalendarDataRepository : IGetEventsCalendarDataRepository
+internal class GetEventsRepository : IGetEventsRepository
 {
     private readonly ApplendarDbContext _dbContext;
 
-    public GetEventsCalendarDataRepository(ApplendarDbContext dbContext)
+    public GetEventsRepository(ApplendarDbContext dbContext)
         => _dbContext = dbContext;
 
     public async Task<ICollection<Event>> GetEventsInRangeAsync(DateTime? fromDate,
@@ -90,6 +88,6 @@ public class GetEventsCalendarDataRepository : IGetEventsCalendarDataRepository
         if (toDate != null)
             query = query.Where(x => x.StartAtUtc.Date <= toDate.Value.Date);
 
-        return await query.ToListAsync();
+        return await query.ToListAsync(cancellationToken);
     }
 }
