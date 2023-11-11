@@ -39,7 +39,7 @@ public class ApplendarDbContext : DbContext
     private void AddTimestamps()
     {
         IEnumerable<EntityEntry> entities = ChangeTracker.Entries()
-            .Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
+            .Where(x => x is { Entity: BaseEntity, State: EntityState.Added or EntityState.Modified });
 
         foreach (EntityEntry entity in entities)
         {
