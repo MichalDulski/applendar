@@ -22,7 +22,7 @@ public class ChangeEventLocationController : ControllerBase
         _updateEventRepository = updateEventRepository;
     }
 
-    [HttpPut("{eventId}")]
+    [HttpPut("{eventId}/location")]
     public async Task<ActionResult<ChangeEventLocationResponse>> Put([FromRoute] Guid eventId,
         [FromBody] ChangeEventLocationRequest request)
     {
