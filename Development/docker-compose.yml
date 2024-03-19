@@ -1,0 +1,25 @@
+﻿version: '3.8'
+services:
+  applendar_api:
+    image: applendar_api
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "5070:80"
+      - "7185:443"
+    depends_on:
+      - postgresql_server
+  
+  postgresql_server:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: LocalUserPasswd
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

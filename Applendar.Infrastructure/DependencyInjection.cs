@@ -9,14 +9,28 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         var sqlServerConnectionString = configuration.GetConnectionString("SQL_CONNECTION_STRING");
-
-        if (!string.IsNullOrEmpty(sqlServerConnectionString))
+        
+        if (string.IsNullOrEmpty(sqlServerConnectionString))
+            throw new Exception("Missing SQL_CONNECTION_STRING environment variable.");
+        
+        try
         {
-            services.AddDbContext<ApplendarDbContext>(options => options.UseSqlServer(sqlServerConnectionString));
-
-            return services;
+            services.AddDbContext<ApplendarDbContext>(options => options.UseNpgsql(sqlServerConnectionString,
+                npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorCodesToAdd: null);
+                }));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            Thread.Sleep(5000);
         }
 
-        throw new Exception("Missing SQL_CONNECTION_STRING environment variable.");
+        return services;
+
     }
 }

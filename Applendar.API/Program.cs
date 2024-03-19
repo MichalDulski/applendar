@@ -6,6 +6,7 @@ using Applendar.API.Features;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -78,6 +79,15 @@ builder.Services.AddInfrastructure(configuration);
 builder.Services.AddFeaturesDependencies();
 
 WebApplication app = builder.Build();
+
+Console.WriteLine(configuration["Migrate:MigrateOnStartup"]);
+var isLoadMigrateSuccess = bool.TryParse(configuration["Migrate:MigrateOnStartup"], out var migrateOnStartup);
+if (isLoadMigrateSuccess && migrateOnStartup)
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplendarDbContext>();
+    db.Database.Migrate();
+}
 
 app.UseMiddleware<ApplendarExceptionHandlerMiddleware>();
 app.UseMiddleware<LogUserLastActivityMiddleware>();
