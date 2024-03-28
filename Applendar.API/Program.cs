@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Applander.Infrastructure;
+using Applendar.Infrastructure;
 using Applendar.API;
 using Applendar.API.Common;
 using Applendar.API.Features;

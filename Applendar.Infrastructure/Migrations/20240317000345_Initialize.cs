@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Applander.Infrastructure.Migrations
+namespace Applendar.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Initialize : Migration

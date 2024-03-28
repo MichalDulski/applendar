@@ -4,7 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Applander.Domain</RootNamespace>
+        <RootNamespace>Applendar.Domain</RootNamespace>
     </PropertyGroup>
 
 

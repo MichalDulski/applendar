@@ -1,10 +1,10 @@
-﻿using Applander.Domain.Common;
-using Applander.Domain.Entities;
-using Applander.Infrastructure.Configurations;
+﻿using Applendar.Domain.Common;
+using Applendar.Domain.Entities;
+using Applendar.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Applander.Infrastructure;
+namespace Applendar.Infrastructure;
 
 public class ApplendarDbContext : DbContext
 {

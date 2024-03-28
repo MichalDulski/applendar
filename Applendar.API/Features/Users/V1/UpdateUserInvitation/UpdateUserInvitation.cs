@@ -1,6 +1,6 @@
-using Applander.Domain.Common;
-using Applander.Domain.Entities;
-using Applander.Infrastructure;
+using Applendar.Domain.Common;
+using Applendar.Domain.Entities;
+using Applendar.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,7 @@ public class UpdateUserInvitationController : ControllerBase
         [FromRoute] Guid eventId,
         [FromBody] UpdateUserInvitationsRequest request)
     {
-        _logger.LogInformation("Update Applander user event invitation");
+        _logger.LogInformation("Update Applendar user event invitation");
 
         EventInvitation? eventInvitation = await _repository.GetUserInvitationAsync(applendarUserId, eventId);
 

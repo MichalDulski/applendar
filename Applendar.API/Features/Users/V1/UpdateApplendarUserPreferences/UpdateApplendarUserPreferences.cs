@@ -1,5 +1,5 @@
-using Applander.Domain.Entities;
-using Applander.Infrastructure;
+using Applendar.Domain.Entities;
+using Applendar.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +27,7 @@ public class UpdateApplendarUserPreferencesController : ControllerBase
     public async Task<ActionResult<UpdateApplendarUserPreferencesResponse>> Put([FromRoute] Guid applendarUserId,
         [FromBody] Preferences request)
     {
-        _logger.LogInformation("Update Applander user preferences");
+        _logger.LogInformation("Update Applendar user preferences");
 
         ApplendarUser? applendarUser = await _repository.GetUserAsync(applendarUserId);
 

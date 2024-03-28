@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Applander.Infrastructure;
+using Applendar.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using ILogger = Serilog.ILogger;
 

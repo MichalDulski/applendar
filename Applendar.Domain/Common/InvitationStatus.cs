@@ -1,4 +1,4 @@
-namespace Applander.Domain.Common;
+namespace Applendar.Domain.Common;
 
 public enum InvitationStatus
 {

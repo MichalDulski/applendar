@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using Applander.Domain.Entities;
-using Applander.Infrastructure;
+using Applendar.Domain.Entities;
+using Applendar.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ public class RegisterApplendarUserController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<RegisterUserResponse>> Post([FromBody] RegisterUserRequest request)
     {
-        _logger.LogInformation("Adding Applander user");
+        _logger.LogInformation("Adding Applender user");
 
         var user = ApplendarUser.Create(request.FirstName, request.LastName, request.ExternalId);
 

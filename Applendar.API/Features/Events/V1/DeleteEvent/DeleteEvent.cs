@@ -1,5 +1,5 @@
-using Applander.Domain.Entities;
-using Applander.Infrastructure;
+using Applendar.Domain.Entities;
+using Applendar.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

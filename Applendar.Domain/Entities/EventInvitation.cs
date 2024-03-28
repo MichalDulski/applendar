@@ -1,6 +1,6 @@
-using Applander.Domain.Common;
+using Applendar.Domain.Common;
 
-namespace Applander.Domain.Entities;
+namespace Applendar.Domain.Entities;
 
 public class EventInvitation : Updateable
 {

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Applander.Infrastructure;
+namespace Applendar.Infrastructure;
 
 public static class DependencyInjection
 {

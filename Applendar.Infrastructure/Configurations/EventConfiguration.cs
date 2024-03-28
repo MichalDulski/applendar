@@ -1,8 +1,8 @@
-using Applander.Domain.Entities;
+using Applendar.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Applander.Infrastructure.Configurations;
+namespace Applendar.Infrastructure.Configurations;
 
 internal class EventConfiguration : IEntityTypeConfiguration<Event>
 {

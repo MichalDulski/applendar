@@ -1,6 +1,6 @@
-using Applander.Domain.Common;
-using Applander.Domain.Entities;
-using Applander.Infrastructure;
+using Applendar.Domain.Common;
+using Applendar.Domain.Entities;
+using Applendar.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +27,7 @@ public class GetUserEventInvitationsController : ControllerBase
     [HttpGet("{applendarUserId}/invitations")]
     public async Task<ActionResult<GetUserEventInvitationDto[]>> Get([FromRoute] Guid applendarUserId)
     {
-        _logger.LogInformation("Get Applander user details");
+        _logger.LogInformation("Get Applendar user details");
 
         ICollection<EventInvitation> applendarUserInvitations =
             await _repository.GetUserInvitationsAsync(applendarUserId);

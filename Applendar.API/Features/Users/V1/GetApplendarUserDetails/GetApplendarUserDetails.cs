@@ -1,5 +1,5 @@
-using Applander.Domain.Entities;
-using Applander.Infrastructure;
+using Applendar.Domain.Entities;
+using Applendar.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ public class GetApplendarUserProfileController : ControllerBase
     [HttpGet("{applendarUserId}")]
     public async Task<ActionResult<ApplendarUserProfile>> Get([FromRoute] Guid applendarUserId)
     {
-        _logger.LogDebug("Invoked Get Applander user profile");
+        _logger.LogDebug("Invoked Get Applendar user profile");
 
         ApplendarUser? applendarUser = await _repository.GetUserAsync(applendarUserId);
 
