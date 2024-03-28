@@ -5,7 +5,7 @@ Applendar is a C# project that uses SQL for data storage. It's a middleware that
 
 ## Getting Started
 
-When running locally remember to update the `SQL_CONNECTION_STRING` in the `appsettings.*.json` file with your PostgreSQL server details.
+When running locally remember to update the `ApplendarDb` in the `appsettings.*.json` file with your PostgreSQL server details.
 
 When running with Docker, the `docker-compose.yml` takes care of the database setup.
 
