@@ -1,4 +1,5 @@
 # Applendar
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 Applendar is a C# project that uses SQL for data storage. It's a middleware that logs the last activity of a user. It uses Serilog for logging and Entity Framework Core for data access.
 
