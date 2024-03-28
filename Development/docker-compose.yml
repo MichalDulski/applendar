@@ -2,6 +2,9 @@
 services:
   applendar_api:
     image: applendar_api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ApplendarDb=Host=postgresql_server;Database=postgres;Username=postgres;Password=LocalUserPasswd
     build:
       context: ..
       dockerfile: Dockerfile

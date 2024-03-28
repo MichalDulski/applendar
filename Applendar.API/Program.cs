@@ -65,7 +65,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        policyBuilder => policyBuilder.WithOrigins("http://localhost:7185").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+        policyBuilder => policyBuilder
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
 
 builder.Services.AddControllers()
@@ -111,5 +114,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowSpecificOrigin");
 app.MapControllers();
+app.UseStaticFiles();
 
 app.Run();

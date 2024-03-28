@@ -8,10 +8,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var sqlServerConnectionString = configuration.GetConnectionString("SQL_CONNECTION_STRING");
+        var sqlServerConnectionString = configuration.GetConnectionString("ApplendarDb");
         
         if (string.IsNullOrEmpty(sqlServerConnectionString))
-            throw new Exception("Missing SQL_CONNECTION_STRING environment variable.");
+            throw new Exception("Missing ApplendarDb environment variable.");
         
         try
         {

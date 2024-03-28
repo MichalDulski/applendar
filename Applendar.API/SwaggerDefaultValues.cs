@@ -56,8 +56,8 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 
     public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider, IConfiguration configuration)
     {
-        this._provider = provider;
-        this._configuration = configuration;
+        _provider = provider;
+        _configuration = configuration;
     }
 
     public void Configure(SwaggerGenOptions options)
